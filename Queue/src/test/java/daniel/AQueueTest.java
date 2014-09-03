@@ -1,7 +1,6 @@
 package daniel;
 
 import static org.junit.Assert.*;
-
 import org.junit.Test;
 
 public class AQueueTest {

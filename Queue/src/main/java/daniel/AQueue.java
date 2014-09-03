@@ -25,13 +25,15 @@ public class AQueue implements Queue {
 
 	// returns the element at the beginning of the queue
 	public Object top() throws AssertionError {
-		if(beginning==null) throw new AssertionError();
+		//if(isEmpty()) throw new AssertionError();
+		Assert.assertFalse("can't see top, the queue is empty",isEmpty());
 		return beginning.getData();
 	}
 
 	// removes the element at the beginning of the queue
 	public void remove() throws AssertionError{
-		if(beginning==null) throw new AssertionError();
+		//if(isEmpty()) throw new AssertionError();
+		Assert.assertFalse("can't delete, the queue is empty",isEmpty());
 		beginning = beginning.next();
 	}
 
