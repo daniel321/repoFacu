@@ -111,6 +111,8 @@ CXXFLAGS += -std=$(CXXSTD)
 LD = $(CXX)
 endif
 
+LDLIBS +=-lrt
+
 # Si no especifica archivos, tomo todos.
 fuentes ?= $(wildcard *.$(extension))
 
@@ -136,7 +138,7 @@ endif
 all: $(target) execute clean
 
 execute: 
-	./tp 10
+	./tp
 
 o_files = $(patsubst %.$(extension),%.o,$(fuentes))
 

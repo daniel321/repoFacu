@@ -1,7 +1,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>  	// wait
 #include <unistd.h>  	// fork
-#include <stdlib.h>	// rand,atoi
+#include <stdlib.h>	// rand,atoi,sleep
 #include <time.h> 	// srand
 #include <iostream>	// cout
 
@@ -36,8 +36,7 @@ void childCode(){
 }
 
 void displayResults(int numProc){
-	int retval = system("ps");
-	retval = retval;
+	system("ps");
 
 	for(int i=0; i<numProc; i++){
 		int retVal;			// importante, el valor de status contiene mas info que solo el val de retorno
