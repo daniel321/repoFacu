@@ -43,7 +43,7 @@ extension = cpp
 ###########################
 
 # Opciones para el compilador C/C++ en modo ansi.
-CFLAGS = -Wall
+CFLAGS = -Wall -Werror -pedantic -pedantic-errors
 
 # Para que explote lo mas posible
 CFLAGS += -O3 -DNDEBUG
@@ -111,8 +111,6 @@ CXXFLAGS += -std=$(CXXSTD)
 LD = $(CXX)
 endif
 
-LDLIBS +=-lrt
-
 # Si no especifica archivos, tomo todos.
 fuentes ?= $(wildcard *.$(extension))
 
@@ -133,12 +131,9 @@ endif
 # REGLAS
 #########
 
-.PHONY: all execute clean
+.PHONY: all clean
 
-all: $(target) execute clean
-
-execute: 
-	./tp
+all: $(target)
 
 o_files = $(patsubst %.$(extension),%.o,$(fuentes))
 

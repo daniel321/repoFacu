@@ -1,30 +1,21 @@
-# Makefile de ejemplo para C++
+# Makefile de ejemplo para programa cliente-servidor en C/C++
+# 
+# Creado: vie abr 27 00:37:46 ART 2007
 #
-# Creado: jue abr 15 15:34:19 ART 2004
-#
-# Copyleft 2004 - Leandro Lucarella, Bajo licencia GPL [http://www.gnu.org/]
+# Copyleft 2007 - Leandro Lucarella, Bajo licencia GPL [http://www.gnu.org/]
 #
 
 # CONFIGURACION
 ################
 
-# Nombre del ejecutable.
-target = tp
-
 # Extensión de los archivos a compilar (c para C, cpp o cc o cxx para C++).
 extension = cpp
-
-# Archivos con el código fuente que componen el ejecutable. Si no se especifica,
-# toma todos los archivos con la extensión mencionada. Para especificar hay que
-# descomentar la línea (quitarle el '#' del principio).
-# NOTA: No poner cabeceras (.h).
-#fuentes = entrada.cpp
 
 # Si usa funciones de math.h, descomentá (quitale el '#' a) la siguiente línea.
 #math = si
 
 # Si usa pthreads, descomentá (quitale el '#' a) la siguiente línea.
-#pthreads = si
+pthreads = si
 
 # Si usa gthreads, descomentá (quitale el '#' a) la siguiente línea.
 #gthreads = si
@@ -43,16 +34,16 @@ extension = cpp
 ###########################
 
 # Opciones para el compilador C/C++ en modo ansi.
-CFLAGS = -Wall
+CFLAGS = -Wall -Werror -pedantic -pedantic-errors
 
 # Para que explote lo mas posible
-CFLAGS += -O3 -DNDEBUG
+#CFLAGS += -O3 -DNDEBUG
 
 # Para valgrind o debug
 CFLAGS += -ggdb -DDEBUG -fno-inline
 
 # Opciones del enlazador.
-#LDFLAGS =
+LDFLAGS =
 
 # Estandar de C a usar
 CSTD = c99
@@ -73,7 +64,7 @@ CFLAGS += $(shell pkg-config --cflags gtk+-2.0)
 LDFLAGS += $(shell pkg-config --libs gtk+-2.0)
 endif
 
-# Agrego flags y libs de GTK+ de ser necesario.
+# Agrego flags y libs de gtkmm de ser necesario.
 ifdef gtkmm
 CFLAGS += $(shell pkg-config --cflags gtkmm-2.4)
 LDFLAGS += $(shell pkg-config --libs gtkmm-2.4)
@@ -111,9 +102,6 @@ CXXFLAGS += -std=$(CXXSTD)
 LD = $(CXX)
 endif
 
-# Si no especifica archivos, tomo todos.
-fuentes ?= $(wildcard *.$(extension))
-
 occ := $(CC)
 ocxx := $(CXX)
 orm := $(RM)
@@ -127,18 +115,27 @@ RM =  @echo "  CLEAN"; $(orm)
 LD =  @echo "  LD  $@"; $(old)
 endif
 
+# Si no especifica archivos, tomo todos.
+fuentes_client ?= $(wildcard client*.$(extension))
+fuentes_admin ?= $(wildcard admin*.$(extension))
+fuentes_vendedor ?= $(wildcard vendedor*.$(extension))
+fuentes_calecita ?= $(wildcard calecita*.$(extension))
+fuentes_common ?= $(wildcard common*.$(extension))
+
 
 # REGLAS
 #########
 
-.PHONY: all execute clean
+.PHONY: all clean
 
-all: $(target) execute clean
+all: client admin vendedor calecita
 
-execute: 
-	./tp 10
+o_common_files = $(patsubst %.$(extension),%.o,$(fuentes_common))
+o_client_files = $(patsubst %.$(extension),%.o,$(fuentes_client)) $(o_common_files)
+o_admin_files = $(patsubst %.$(extension),%.o,$(fuentes_admin)) $(o_common_files)
+o_vendedor_files = $(patsubst %.$(extension),%.o,$(fuentes_vendedor)) $(o_common_files)
+o_calecita_files = $(patsubst %.$(extension),%.o,$(fuentes_calecita)) $(o_common_files)
 
-o_files = $(patsubst %.$(extension),%.o,$(fuentes))
 
 %.deps: %.$(extension)
 	@set -e; rm -f $@; \
@@ -148,14 +145,54 @@ o_files = $(patsubst %.$(extension),%.o,$(fuentes))
 
 -include $(o_files:.o=.deps)
 
-$(target): $(o_files)
-	@if [ -z "$(o_files)" ]; \
+client: $(o_client_files)
+	@if [ -z "$(o_client_files)" ]; \
 	then \
-		echo "No hay archivos de entrada, recuerde que la extensión debe ser '.$(extension)'."; \
+		echo "No hay archivos de entrada para el cliente (archivos client*.$(extension))."; \
 		false; \
 	fi >&2
-	$(LD) $(LDFLAGS) $(o_files) $(LOADLIBS) $(LDLIBS) -o $(target)
+	$(LD) $(LDFLAGS) $(o_client_files) $(LOADLIBES) $(LDLIBS) -o client $(LDADD)
+
+admin: $(o_admin_files)
+	@if [ -z "$(o_admin_files)" ]; \
+	then \
+		echo "No hay archivos de entrada para el administrador de la calecita (archivos admin*.$(extension))."; \
+		false; \
+	fi >&2
+	$(LD) $(LDFLAGS) $(o_admin_files) $(LOADLIBES) $(LDLIBS) -o admin $(LDADD)
+
+vendedor: $(o_vendedor_files)
+	@if [ -z "$(o_vendedor_files)" ]; \
+	then \
+		echo "No hay archivos de entrada para el vendedor de boletos (archivos vendedor*.$(extension))."; \
+		false; \
+	fi >&2
+	$(LD) $(LDFLAGS) $(o_vendedor_files) $(LOADLIBES) $(LDLIBS) -o vendedor $(LDADD)
+
+
+calecita: $(o_calecita_files)
+	@if [ -z "$(o_calecita_files)" ]; \
+	then \
+		echo "No hay archivos de entrada para la calecita (archivos calecita*.$(extension))."; \
+		false; \
+	fi >&2
+	$(LD) $(LDFLAGS) $(o_calecita_files) $(LOADLIBES) $(LDLIBS) -o calecita $(LDADD)
+
 
 clean:
-	$(RM) $(o_files) $(o_files:.o=.deps) $(target)
+	@$(RM) -fv *.o *~ client admin vendedor calecita
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
