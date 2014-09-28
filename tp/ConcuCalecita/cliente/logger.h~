@@ -1,0 +1,31 @@
+#ifndef CLIENTLOGGER_H_
+#define CLIENTLOGGER_H_
+
+#include <stdio.h>
+#include <iostream>
+#include <string>
+#include <sstream>
+
+using namespace std;
+
+class clientLogger{
+	public:
+		// esctibe un mensaje en el log protegiendolo
+		// de escrituras concurrentes
+		static void log(const std::string logMsg);
+
+		// pasa el numero a un string
+		static void intToString(int numero, std::string& buffer);
+
+};
+
+// esctibe un mensaje en el log protegiendolo
+// de escrituras concurrentes
+void clientLogger :: log(const string logMsg){
+	if(!logMsg.empty()){
+		fflush(stdout);
+		cout << logMsg + "\n";
+	}
+}
+
+#endif

@@ -148,3 +148,4 @@ template <class T> int MemoriaCompartida<T> :: cantidadProcesosAdosados () const
 }
 
 #endif
+

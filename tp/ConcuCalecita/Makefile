@@ -34,7 +34,7 @@ pthreads = si
 ###########################
 
 # Opciones para el compilador C/C++ en modo ansi.
-CFLAGS = -Wall -Werror -pedantic -pedantic-errors
+CFLAGS = #-Wall -Werror -pedantic -pedantic-errors
 
 # Para que explote lo mas posible
 #CFLAGS += -O3 -DNDEBUG
@@ -116,11 +116,13 @@ LD =  @echo "  LD  $@"; $(old)
 endif
 
 # Si no especifica archivos, tomo todos.
-fuentes_client ?= $(wildcard client*.$(extension))
-fuentes_admin ?= $(wildcard admin*.$(extension))
-fuentes_vendedor ?= $(wildcard vendedor*.$(extension))
-fuentes_calecita ?= $(wildcard calecita*.$(extension))
-fuentes_common ?= $(wildcard common*.$(extension))
+fuentes_client = $(wildcard cliente/*.$(extension))
+fuentes_admin = $(wildcard administrador/*.$(extension))
+fuentes_vendedor = $(wildcard vendedor/*.$(extension))
+fuentes_calecita = $(wildcard calecita/*.$(extension))
+fuentes_common = $(wildcard common/*.$(extension))
+fuentes_common += $(wildcard fifo/*.$(extension))
+fuentes_common += $(wildcard memeCompartida/*.$(extension))
 
 
 # REGLAS
@@ -151,7 +153,7 @@ client: $(o_client_files)
 		echo "No hay archivos de entrada para el cliente (archivos client*.$(extension))."; \
 		false; \
 	fi >&2
-	$(LD) $(LDFLAGS) $(o_client_files) $(LOADLIBES) $(LDLIBS) -o client $(LDADD)
+	$(LD) $(LDFLAGS) $(o_client_files) $(LOADLIBES) $(LDLIBS) -o client.exe $(LDADD)
 
 admin: $(o_admin_files)
 	@if [ -z "$(o_admin_files)" ]; \
@@ -159,7 +161,7 @@ admin: $(o_admin_files)
 		echo "No hay archivos de entrada para el administrador de la calecita (archivos admin*.$(extension))."; \
 		false; \
 	fi >&2
-	$(LD) $(LDFLAGS) $(o_admin_files) $(LOADLIBES) $(LDLIBS) -o admin $(LDADD)
+	$(LD) $(LDFLAGS) $(o_admin_files) $(LOADLIBES) $(LDLIBS) -o admin.exe $(LDADD)
 
 vendedor: $(o_vendedor_files)
 	@if [ -z "$(o_vendedor_files)" ]; \
@@ -167,7 +169,7 @@ vendedor: $(o_vendedor_files)
 		echo "No hay archivos de entrada para el vendedor de boletos (archivos vendedor*.$(extension))."; \
 		false; \
 	fi >&2
-	$(LD) $(LDFLAGS) $(o_vendedor_files) $(LOADLIBES) $(LDLIBS) -o vendedor $(LDADD)
+	$(LD) $(LDFLAGS) $(o_vendedor_files) $(LOADLIBES) $(LDLIBS) -o vendedor.exe $(LDADD)
 
 
 calecita: $(o_calecita_files)
@@ -176,11 +178,11 @@ calecita: $(o_calecita_files)
 		echo "No hay archivos de entrada para la calecita (archivos calecita*.$(extension))."; \
 		false; \
 	fi >&2
-	$(LD) $(LDFLAGS) $(o_calecita_files) $(LOADLIBES) $(LDLIBS) -o calecita $(LDADD)
+	$(LD) $(LDFLAGS) $(o_calecita_files) $(LOADLIBES) $(LDLIBS) -o calecita.exe $(LDADD)
 
 
 clean:
-	@$(RM) -fv *.o *~ client admin vendedor calecita
+	@$(RM) -fv *.o *~ cola/*.o calecita/*.o administrador/*.o cliente/*.o vendedor/*.o client.exe admin.exe vendedor.exe calecita.exe
 
 
 
