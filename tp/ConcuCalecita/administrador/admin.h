@@ -1,7 +1,7 @@
 #ifndef ADMIN_H
 #define ADMIN_H
 
-#include "../common/MemCompartida.h"
+#include "../common/memCompartida/MemCompartida.h"
 #include "../common/Constants.h" // archivo,code
 
 using namespace std;

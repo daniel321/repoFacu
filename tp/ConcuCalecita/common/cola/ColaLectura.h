@@ -5,6 +5,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <stdio.h>
 
 using namespace std;
 
@@ -29,6 +30,10 @@ class ColaLectura{
 // constructor
 ColaLectura::ColaLectura(const char* path){
 	mknod(path,S_IFIFO|0666,0);
+	
+	FILE* f = fopen(path, "w");
+	fclose(f);
+
 	fd = open(path,O_RDONLY | O_TRUNC);
 }
 
@@ -43,7 +48,11 @@ ColaLectura::~ColaLectura(){
 int ColaLectura::pop() const{
 	int valor;
 	read(fd,(void*)(&valor),sizeof(int));
-	return valor;
+
+	if(valor != EOF)
+		return valor;
+	else
+		return COLAVACIA;
 }
 
 #endif

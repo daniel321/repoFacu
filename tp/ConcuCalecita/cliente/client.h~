@@ -5,9 +5,15 @@
 #include <unistd.h>
 #include <sstream>
 
-#include "../common/MemCompartida.h" 
+#include "../common/signals/Handler.h" 
+#include "../common/signals/SignalHandler.h" 
+
+#include "../common/memCompartida/MemCompartida.h" 
 #include "../common/Constants.h" 	// archivo,code	
-#include "../cola/ColaEscritura.h"
+
+#include "../common/cola/ColaEscritura.h"
+#include "../common/cola/ColaLectura.h"
+
 #include "LoggerCliente.h"
 
 using namespace std;
@@ -24,24 +30,26 @@ class Cliente {
 		// espera a ser atendido y compra el boleto	
 		void comprarBoleto();
 
-		// TODO, ocurre cuando es atendido (x interrupción)
+		// ocurre cuando es atendido (x interrupción)
+		// envia al vendedor el dinero disponible y recibe vuelto
+		// en caso que el dinero no sea suficiente, no se produce cambio algúno
+		// (y el cliente se va a casa...)
 		void comunicacionConElVendedor();
 
 		// espera a poder subirse en la calecita
 		void subirseALaCalecita();
 
-		// TODO, ocurre cuando se sube a la calecita (x interrupción)
+		// ocurre cuando se sube a la calecita (x interrupción)
 		void subidaALaCalecita();
 
 	private:
 		MemoriaCompartida<bool> cerroLaCalecita;
 		bool tengoBoleto;
-		bool esperando;
 		int  cash;
 		int  id;
 
 		// el cliente se agrega a si mismo a una cola y espera ser atendido
-		void esperarEnLaCola(const char* pathCola);
+		void esperarEnLaCola(const char* pathCola,Handler& handler);
 };
 
 // constructor
@@ -51,16 +59,14 @@ Cliente::Cliente(int presup,bool boleto):cerroLaCalecita(ARCHBOLETERIACERRADA,CO
 // destructor
 Cliente::~Cliente(){
 	LoggerCliente::logLlendoseACasa(id);
-	//cerroLaCalecita.liberar();
 }	
 
 // el cliente se agrega a si mismo a una cola y espera ser atendido
-void Cliente::esperarEnLaCola(const char* pathCola){
+void Cliente::esperarEnLaCola(const char* pathCola,Handler& handler){
 	ColaEscritura canal(pathCola); 
 	canal.push(id);
 
-	esperando = true;
-	while(esperando && !cerroLaCalecita.leer())
+	while((handler.getBandera() != 1) && !cerroLaCalecita.leer())
 		sleep(ESPERA);
 }
 
@@ -68,46 +74,79 @@ void Cliente::esperarEnLaCola(const char* pathCola){
 void Cliente::comprarBoleto(){
 	if(!tengoBoleto){
 		LoggerCliente::logEsperandoParaComprarBoleto(id);
-		esperarEnLaCola(ARCHCOLACOMPRARBOLETOS); 
+		
+		Handler handler(SIGNALCLIENTEVENDEDOR);
+		SignalHandler::getInstance()->registrarHandler(SIGNALCLIENTEVENDEDOR,&handler);
+	
+		esperarEnLaCola(ARCHCOLACOMPRARBOLETOS,handler); 
 
-		if(tengoBoleto){
-			LoggerCliente::logAdquirioElBoleto(id,cash);
-		}else{ 
-			if(cerroLaCalecita.leer())
-				LoggerCliente::logNoPudoComprarElBoletoCerroLaBoleteria(id);			
-			else
-				LoggerCliente::logNoPudoComprarElBoletoFaltoCash(id,PRECIOBOLETO-cash);
+		if(handler.getBandera()){
+			LoggerCliente::logRecibiSenalVendedor(id);
+			comunicacionConElVendedor();
 		}
+
 	}else{
 		LoggerCliente::logYaTeniaBoleto(id);
 	}
 }
 
-// TODO, ocurre cuando es atendido (x interrupción)
+// ocurre cuando es atendido (x interrupción)
+// envia al vendedor el dinero disponible y recibe vuelto
+// en caso que el dinero no sea suficiente, no se produce cambio algúno
+// (y el cliente se va a casa...)
 void Cliente::comunicacionConElVendedor(){
-	if (cash >= PRECIOBOLETO){
+
+	ColaLectura recibir(ARCHCOMUNICACIONCLIENTEVENDEDOR2);
+	ColaEscritura enviar(ARCHCOMUNICACIONCLIENTEVENDEDOR);
+
+	sleep(2); // TODO cambiar x semaforo (necesito q se cree el leer antes q se mande algo)
+	enviar.push(cash);
+
+	int sobrante = 0;
+	do{
+		sobrante = recibir.pop();
+	}while((sobrante == -1) && !cerroLaCalecita.leer());
+
+
+	if(cerroLaCalecita.leer()){
+		LoggerCliente::logNoPudoComprarElBoletoCerroLaBoleteria(id);	
+	}else if (sobrante != cash){
+		LoggerCliente::logAdquirioElBoleto(id,cash);
 		tengoBoleto = true;
-		cash -= PRECIOBOLETO;
+	}else{
+		LoggerCliente::logNoPudoComprarElBoletoFaltoCash(id,PRECIOBOLETO-sobrante);
 	}
+
+	cash = sobrante;
 }
 
 // espera a poder subirse en la calecita
 void Cliente::subirseALaCalecita(){
 	if(tengoBoleto){
 		LoggerCliente::logEsperandoParaSubirseALaCalecita(id);
-		esperarEnLaCola(ARCHCOLACSUBIRSEALACALECITA); 
+
+		Handler handler(SIGNALCLIENTECALECITA);
+		SignalHandler::getInstance()->registrarHandler(SIGNALCLIENTECALECITA,&handler);
+
+		esperarEnLaCola(ARCHCOLACSUBIRSEALACALECITA,handler); 
+
+		if(handler.getBandera()){
+			LoggerCliente::logRecibiSenalCalecita(id);
+			subidaALaCalecita();
+		}
 	}
 
 }
 
-// TODO, ocurre cuando se sube a la calecita (x interrupción)
+// ocurre cuando se sube a la calecita (x interrupción)
 void Cliente::subidaALaCalecita(){
 	LoggerCliente::logEnLaCalecita(id);
 	tengoBoleto = false;
 
-	//TODO avisarle al cliente cuando termina la vuelta
-	esperando = true;
-	while(esperando && !cerroLaCalecita.leer())
+	Handler handler(SIGNALTERMINOCALECITA);
+	SignalHandler::getInstance()->registrarHandler(SIGNALTERMINOCALECITA,&handler);
+
+	while((handler.getBandera() != 1) && !cerroLaCalecita.leer())
 		sleep(ESPERA);
 }
 

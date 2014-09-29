@@ -121,8 +121,9 @@ fuentes_admin = $(wildcard administrador/*.$(extension))
 fuentes_vendedor = $(wildcard vendedor/*.$(extension))
 fuentes_calecita = $(wildcard calecita/*.$(extension))
 fuentes_common = $(wildcard common/*.$(extension))
-fuentes_common += $(wildcard fifo/*.$(extension))
-fuentes_common += $(wildcard memeCompartida/*.$(extension))
+fuentes_common += $(wildcard common/cola/*.$(extension))
+fuentes_common += $(wildcard common/memeCompartida/*.$(extension))
+fuentes_common += $(wildcard common/signals/*.$(extension))
 
 
 # REGLAS
@@ -133,10 +134,10 @@ fuentes_common += $(wildcard memeCompartida/*.$(extension))
 all: client admin vendedor calecita
 
 o_common_files = $(patsubst %.$(extension),%.o,$(fuentes_common))
-o_client_files = $(patsubst %.$(extension),%.o,$(fuentes_client)) $(o_common_files)
-o_admin_files = $(patsubst %.$(extension),%.o,$(fuentes_admin)) $(o_common_files)
-o_vendedor_files = $(patsubst %.$(extension),%.o,$(fuentes_vendedor)) $(o_common_files)
-o_calecita_files = $(patsubst %.$(extension),%.o,$(fuentes_calecita)) $(o_common_files)
+o_client_files = $(o_common_files) $(patsubst %.$(extension),%.o,$(fuentes_client)) 
+o_admin_files = $(o_common_files) $(patsubst %.$(extension),%.o,$(fuentes_admin))
+o_vendedor_files = $(o_common_files) $(patsubst %.$(extension),%.o,$(fuentes_vendedor))
+o_calecita_files =  $(o_common_files) $(patsubst %.$(extension),%.o,$(fuentes_calecita))
 
 
 %.deps: %.$(extension)
@@ -182,7 +183,7 @@ calecita: $(o_calecita_files)
 
 
 clean:
-	@$(RM) -fv *.o *~ cola/*.o calecita/*.o administrador/*.o cliente/*.o vendedor/*.o client.exe admin.exe vendedor.exe calecita.exe
+	@$(RM) -fv *.o *~ cola/*.o calecita/*.o administrador/*.o cliente/*.o vendedor/*.o logs/* client.exe admin.exe vendedor.exe calecita.exe
 
 
 

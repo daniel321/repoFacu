@@ -2,12 +2,15 @@
 #define CALECITA_H
 
 #include <list>
-#include <ctime>			// clock
+#include <ctime>					// clock
+#include <signal.h>					// kill
 
 #include "LoggerCalecita.h"
-#include "../common/MemCompartida.h" 
-#include "../common/Constants.h" 	// archivo,code
-#include "../cola/ColaLectura.h"
+#include "../common/memCompartida/MemCompartida.h" 
+#include "../common/Constants.h" 			// archivo,code
+
+#include "../common/cola/ColaEscritura.h"
+#include "../common/cola/ColaLectura.h"
 
 using namespace std;
 
@@ -40,6 +43,7 @@ class Calecita {
 
 // constructor
 Calecita::Calecita():canal(ARCHCOLACSUBIRSEALACALECITA),cerroLaCalecita(ARCHBOLETERIACERRADA,CODEBOLETERIACERRADA){
+	cerroLaCalecita.escribir(false);
 }	
 
 // destructor
@@ -74,9 +78,11 @@ void Calecita::operar(){
 void Calecita::esperarClientes(){
 	do{
 		int pid = canal.pop();
-		if(pid != 0)
-			pids.push_back(pid);
 
+		if(pid != COLAVACIA) {
+			kill(pid,SIGNALCLIENTECALECITA);
+			pids.push_back(pid);
+		}
 	}while((pids.size() < CLIENTESPORVUELTA) && !cerroLaCalecita.leer());
 }
 
@@ -89,12 +95,9 @@ void Calecita::arrancarVueltaPrematuramente(){
 void Calecita::darVuelta(){
 	sleep(TIEMPODEVUELTA);
 	
-	int tam = pids.size();
-	for(int i=0; i<tam; i++){
-		int pid = pids.front();
-		// TODO enviar señal al cliente
-		pids.pop_front();
-	}
+	for (list<int>::const_iterator iterator = pids.begin(); iterator != pids.end(); ++iterator) 
+		kill(*iterator,SIGNALTERMINOCALECITA);
+	pids.clear();
 }
 
 #endif

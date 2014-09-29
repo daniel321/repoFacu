@@ -1,7 +1,7 @@
 #ifndef ADMIN_H
 #define ADMIN_H
 
-#include "../common/MemCompartida.h"
+#include "../common/MemCompartida/MemCompartida.h"
 #include "../common/Constants.h" // archivo,code
 
 using namespace std;
@@ -32,7 +32,7 @@ Administrador::Administrador():cerroLaCalecita(ARCHBOLETERIACERRADA,CODEBOLETERI
 
 // destructor
 Administrador::~Administrador(){
-	cerroLaCalecita.liberar();
+//	cerroLaCalecita.liberar();
 }	
 	
 // intenta consultar la el dinero de la recaudacion de la calecita

@@ -2,11 +2,14 @@
 #define VENDEDOR_H
 
 #include <iostream>
+#include <signal.h>					// kill
 
 #include "LoggerVendedor.h"
-#include "../common/MemCompartida.h" 
-#include "../common/Constants.h" 		// archivoColaComprarBoletos
-#include "../cola/ColaLectura.h"
+#include "../common/memCompartida/MemCompartida.h" 
+#include "../common/Constants.h" 			// archivoColaComprarBoletos
+
+#include "../common/cola/ColaEscritura.h"
+#include "../common/cola/ColaLectura.h"
 
 using namespace std;
 
@@ -29,7 +32,10 @@ class Vendedor {
 		// espera a que aparezca un nuevo cliente y retorna su pid
 		int esperarCliente() const;
 
-		// TODO atiende a un cliente
+		// atiende a un cliente
+		// envia una señal al cliente para iniciar la interacción
+		// luego recibe el dinero por parte de éste, de ser suficiente, le retorna el vuelto
+		// si no, le retorna el total
 		void atenderCliente(int pid) const;
 };
 
@@ -50,7 +56,8 @@ void Vendedor::atenderClientes() const{
 
 	do{
 		int pid = esperarCliente();
-		if(!cerroLaCalecita.leer())
+
+		if(!cerroLaCalecita.leer() && (pid != COLAVACIA))
 			atenderCliente(pid);
 	}while(!cerroLaCalecita.leer());
 }
@@ -60,15 +67,33 @@ int Vendedor::esperarCliente() const{
 	int pid=0;
 	do{
 		pid = canal.pop();
-	}while((pid == 0) && !cerroLaCalecita.leer());
+		cout << pid << endl;
+	}while((pid == COLAVACIA) && !cerroLaCalecita.leer());
 	return pid;
 }
 
-// TODO atiende a un cliente
+// atiende a un cliente
+// envia una señal al cliente para iniciar la interacción
+// luego recibe el dinero por parte de éste, de ser suficiente, le retorna el vuelto
+// si no, le retorna el total
 void Vendedor::atenderCliente(int pid) const{
 	LoggerVendedor::logAtendiendoA(pid);
-}
+	kill(pid,SIGNALCLIENTEVENDEDOR);
 
+	ColaEscritura enviar(ARCHCOMUNICACIONCLIENTEVENDEDOR2);
+	ColaLectura recibir(ARCHCOMUNICACIONCLIENTEVENDEDOR);
+
+	int presupuesto = 0;
+	do{
+		presupuesto = recibir.pop();
+	}while((presupuesto == COLAVACIA) && !cerroLaCalecita.leer());
+
+	if (presupuesto >= PRECIOBOLETO)
+		enviar.push(presupuesto-PRECIOBOLETO);
+	else
+		enviar.push(presupuesto);
+
+}
 #endif
 
 
