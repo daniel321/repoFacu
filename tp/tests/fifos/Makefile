@@ -116,41 +116,20 @@ LD =  @echo "  LD  $@"; $(old)
 endif
 
 # Si no especifica archivos, tomo todos.
-fuentes_client = $(wildcard cliente/*.$(extension))
-fuentes_admin = $(wildcard administrador/*.$(extension))
-fuentes_vendedor = $(wildcard vendedor/*.$(extension))
-fuentes_caja = $(wildcard caja/*.$(extension))
-fuentes_calecita = $(wildcard calecita/*.$(extension))
+fuentes_client = $(wildcard cliente*.$(extension))
+fuentes_server = $(wildcard server*.$(extension))
 fuentes_common = $(wildcard common/*.$(extension))
-fuentes_common += $(wildcard common/fifos/*.$(extension))
-fuentes_common += $(wildcard common/memeCompartida/*.$(extension))
-fuentes_common += $(wildcard common/signals/*.$(extension))
-
 
 # REGLAS
 #########
 
 .PHONY: all clean
 
-all: client admin vendedor caja calecita
+all: client server
 
 o_common_files = $(patsubst %.$(extension),%.o,$(fuentes_common))
 o_client_files = $(o_common_files) $(patsubst %.$(extension),%.o,$(fuentes_client)) 
-o_admin_files = $(o_common_files) $(patsubst %.$(extension),%.o,$(fuentes_admin))
-o_vendedor_files = $(o_common_files) $(patsubst %.$(extension),%.o,$(fuentes_vendedor))
-o_caja_files = $(o_common_files) $(patsubst %.$(extension),%.o,$(fuentes_caja)) 
-o_calecita_files =  $(o_common_files) $(patsubst %.$(extension),%.o,$(fuentes_calecita))
-
-test: 
-	./vendedor.exe&
-	./caja.exe 0 &
-	./calecita.exe&
-	./client.exe 999 0 &	
-	./client.exe 999 0 & 	
-	./client.exe 999 0 & 	
-	./client.exe 999 1 & 	
-	./client.exe 9 0 &  
-	./client.exe 9 1 & 	
+o_server_files = $(o_common_files) $(patsubst %.$(extension),%.o,$(fuentes_server))
 
 %.deps: %.$(extension)
 	@set -e; rm -f $@; \
@@ -168,41 +147,16 @@ client: $(o_client_files)
 	fi >&2
 	$(LD) $(LDFLAGS) $(o_client_files) $(LOADLIBES) $(LDLIBS) -o client.exe $(LDADD)
 
-admin: $(o_admin_files)
-	@if [ -z "$(o_admin_files)" ]; \
+server: $(o_server_files)
+	@if [ -z "$(o_server_files)" ]; \
 	then \
 		echo "No hay archivos de entrada para el administrador de la calecita (archivos admin*.$(extension))."; \
 		false; \
 	fi >&2
-	$(LD) $(LDFLAGS) $(o_admin_files) $(LOADLIBES) $(LDLIBS) -o admin.exe $(LDADD)
-
-vendedor: $(o_vendedor_files)
-	@if [ -z "$(o_vendedor_files)" ]; \
-	then \
-		echo "No hay archivos de entrada para el vendedor de boletos (archivos vendedor*.$(extension))."; \
-		false; \
-	fi >&2
-	$(LD) $(LDFLAGS) $(o_vendedor_files) $(LOADLIBES) $(LDLIBS) -o vendedor.exe $(LDADD)
-
-caja: $(o_caja_files)
-	@if [ -z "$(o_caja_files)" ]; \
-	then \
-		echo "No hay archivos de entrada para el vendedor de boletos (archivos vendedor*.$(extension))."; \
-		false; \
-	fi >&2
-	$(LD) $(LDFLAGS) $(o_caja_files) $(LOADLIBES) $(LDLIBS) -o caja.exe $(LDADD)
-
-calecita: $(o_calecita_files)
-	@if [ -z "$(o_calecita_files)" ]; \
-	then \
-		echo "No hay archivos de entrada para la calecita (archivos calecita*.$(extension))."; \
-		false; \
-	fi >&2
-	$(LD) $(LDFLAGS) $(o_calecita_files) $(LOADLIBES) $(LDLIBS) -o calecita.exe $(LDADD)
-
+	$(LD) $(LDFLAGS) $(o_server_files) $(LOADLIBES) $(LDLIBS) -o server.exe $(LDADD)
 
 clean:
-	@$(RM) -fv *.o *~ caja/*.o fifos/*.o calecita/*.o administrador/*.o cliente/*.o vendedor/*.o logs/* client.exe admin.exe vendedor.exe calecita.exe caja.exe
+	@$(RM) -fv *.o *~ common/*.o  client.exe server.exe
 
 
 

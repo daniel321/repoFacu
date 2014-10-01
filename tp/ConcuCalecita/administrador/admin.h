@@ -1,8 +1,9 @@
 #ifndef ADMIN_H
 #define ADMIN_H
 
-#include "../common/memCompartida/MemCompartida.h"
-#include "../common/Constants.h" // archivo,code
+#include "../common/Constants.h" 			// archivo,code
+#include "LoggerAdmin.h"	 			// logger
+#include "../common/fifos/FifoHandler.h"		// fifos
 
 using namespace std;
 
@@ -20,27 +21,26 @@ class Administrador {
 
 		// cierra la calecita
 		void CerrarCalecita();
-	private:
-		MemoriaCompartida<bool> cerroLaCalecita;
 
 };
 
 // constructor
-Administrador::Administrador():cerroLaCalecita(ARCHBOLETERIACERRADA,CODEBOLETERIACERRADA){
-	cerroLaCalecita.escribir(false);
-}	
+Administrador::Administrador(){}	
 
 // destructor
-Administrador::~Administrador(){
-//	cerroLaCalecita.liberar();
-}	
+Administrador::~Administrador(){}	
 	
 // intenta consultar la el dinero de la recaudacion de la calecita
-void Administrador::consultarCaja(){}
+void Administrador::consultarCaja(){
+	FifoHandler::escribir(ARCHGENTEESPERANDOUSARLACAJA,QUIEROCONSULTARCAJA);
+	sleep(1);
+	int caja = FifoHandler::leer(ARCHCAJAADMIN);
+	LoggerAdmin::logCaja(caja);
+}
 
-// cierra la calecita
+// TODO cierra la calecita
 void Administrador::CerrarCalecita(){
-	cerroLaCalecita.escribir(true);
+	LoggerAdmin::logCerrar();
 }
 
 #endif

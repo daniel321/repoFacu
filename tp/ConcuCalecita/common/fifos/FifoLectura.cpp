@@ -4,10 +4,11 @@ FifoLectura::FifoLectura(const std::string nombre) : Fifo(nombre) {
 }
 
 FifoLectura::~FifoLectura() {
+	close(fd);
 }
 
 void FifoLectura::abrir() {
-	fd = open ( nombre.c_str(),O_RDONLY | O_TRUNCATE);
+	fd = open ( nombre.c_str(),O_RDONLY );
 }
 
 ssize_t FifoLectura::leer(void* buffer,const ssize_t buffsize) const {

@@ -7,13 +7,7 @@ int main (int argc, char** argv) {
 
 	Administrador admin;
 	admin.consultarCaja();
-
-	cout << "cierro? (s/n)" << endl;
-	char sn;
-	cin >> sn;
-
-	if(sn)
-		admin.CerrarCalecita();
+	admin.CerrarCalecita();
 
 	return 0;
 }

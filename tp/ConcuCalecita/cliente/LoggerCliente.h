@@ -30,6 +30,10 @@ class LoggerCliente{
 		// esctibe un mensaje en el log indicando que el
 		// cliente no ha logrado comprar el boleto por que cerro la boleteria		
 		static void logNoPudoComprarElBoletoCerroLaBoleteria(int pid);
+
+		// esctibe un mensaje en el log indicando que el
+		// cliente no ha logrado subirse a la calecita ya que esta cerro	
+		static void logNoPudoSubirseCerroLaCalecita(int pid);
 	
 		// esctibe un mensaje en el log indicando que el
 		// cliente ha logrado comprar el boleto		
@@ -38,10 +42,6 @@ class LoggerCliente{
 		// esctibe un mensaje en el log indicando que el
 		// cliente esta haciendo la cola para subirse a la calecita		
 		static void logEsperandoParaSubirseALaCalecita(int pid);
-
-		// esctibe un mensaje en el log indicando que el
-		// cliente esta en la calecita		
-		static void logEnLaCalecita(int pid);
 
 		// esctibe un mensaje en el log indicando que el
 		// cliente esta llendose a casa		
@@ -115,14 +115,6 @@ void LoggerCliente :: logEsperandoParaSubirseALaCalecita(int pid){
 }
 
 // esctibe un mensaje en el log indicando que el
-// cliente esta en la calecita		
-void LoggerCliente :: logEnLaCalecita(int pid){
-	std::ostringstream stream;
-	stream << "cliente " << pid << " dando una vuelta en la calecita." << endl;
-	LoggerCliente::log(stream.str());
-}
-
-// esctibe un mensaje en el log indicando que el
 // cliente esta llendose a casa		
 void LoggerCliente :: logLlendoseACasa(int pid){
 	std::ostringstream stream;
@@ -145,6 +137,16 @@ void LoggerCliente :: logRecibiSenalCalecita(int pid){
 	stream << "cliente " << pid << " entro en la calecita." << endl;
 	LoggerCliente::log(stream.str());
 }
+
+// esctibe un mensaje en el log indicando que el
+// cliente no ha logrado subirse a la calecita ya que esta cerro	
+void LoggerCliente ::logNoPudoSubirseCerroLaCalecita(int pid){
+	std::ostringstream stream2;
+	stream2 << "cliente " << pid << " no pudo subirse ya que cerro la calecita." << endl;
+	LoggerCliente::log(stream2.str());
+}
+
+
 #endif
 
 

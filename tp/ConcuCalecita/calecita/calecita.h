@@ -5,12 +5,10 @@
 #include <ctime>					// clock
 #include <signal.h>					// kill
 
-#include "LoggerCalecita.h"
-#include "../common/memCompartida/MemCompartida.h" 
+#include "LoggerCalecita.h"				// logger
 #include "../common/Constants.h" 			// archivo,code
-
-#include "../common/cola/ColaEscritura.h"
-#include "../common/cola/ColaLectura.h"
+#include "../common/fifos/FifoHandler.h"		// fifos
+#include "../common/fifos/FifoLectura.h"		// fifos
 
 using namespace std;
 
@@ -26,10 +24,14 @@ class Calecita {
 		// espera a que haya cierta cantidad de clientes y realiza una vuelta
 		void operar();
 
+		// TODO a ser llamada al recibir una señal para cerrar
+		// por parte del administrador de la calecita
+		void cerrar();
+
 	private:
-		ColaLectura canal;
-		MemoriaCompartida<bool> cerroLaCalecita;
+		FifoLectura colaParaEntrar;
 		list<int> pids;
+		bool abierto;
 
 		// espera a que aparezca cierta cantidad de clientes para poder arrancar la calecita
 		void esperarClientes();
@@ -42,8 +44,8 @@ class Calecita {
 };
 
 // constructor
-Calecita::Calecita():canal(ARCHCOLACSUBIRSEALACALECITA),cerroLaCalecita(ARCHBOLETERIACERRADA,CODEBOLETERIACERRADA){
-	cerroLaCalecita.escribir(false);
+Calecita::Calecita():colaParaEntrar(ARCHCOLACSUBIRSEALACALECITA),abierto(true){
+	colaParaEntrar.abrir();
 }	
 
 // destructor
@@ -58,13 +60,11 @@ void Calecita::operar(){
 		esperarClientes();
 
 		// TODO reset timeout
-		
-		if(!cerroLaCalecita.leer()){
-			LoggerCalecita::logDandoUnaVuelta(pids.size());
-			darVuelta();
-			LoggerCalecita::logVueltaFinalizada();
-		}
-	}while(!cerroLaCalecita.leer());
+
+		LoggerCalecita::logDandoUnaVuelta(pids.size());
+		darVuelta();
+		LoggerCalecita::logVueltaFinalizada();
+	}while(abierto);
 
 	if(pids.size() > 0){
 		LoggerCalecita::logDandoUnaVuelta(pids.size());
@@ -77,13 +77,13 @@ void Calecita::operar(){
 // espera a que aparezca cierta cantidad de clientes para poder arrancar la calecita
 void Calecita::esperarClientes(){
 	do{
-		int pid = canal.pop();
+		int pid = FifoHandler::leer(colaParaEntrar);
 
-		if(pid != COLAVACIA) {
+		if(pid != 0) {
 			kill(pid,SIGNALCLIENTECALECITA);
 			pids.push_back(pid);
 		}
-	}while((pids.size() < CLIENTESPORVUELTA) && !cerroLaCalecita.leer());
+	}while((pids.size() < CLIENTESPORVUELTA) && abierto);
 }
 
 // TODO a ser llamado por un timeout
@@ -98,6 +98,13 @@ void Calecita::darVuelta(){
 	for (list<int>::const_iterator iterator = pids.begin(); iterator != pids.end(); ++iterator) 
 		kill(*iterator,SIGNALTERMINOCALECITA);
 	pids.clear();
+}
+
+// TODO a ser llamada al recibir una señal para cerrar
+// por parte del administrador de la calecita
+void Calecita::cerrar(){
+	abierto = false;
+	// TODO notificar gente en la cola
 }
 
 #endif

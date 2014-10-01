@@ -5,11 +5,10 @@
 #include <signal.h>					// kill
 
 #include "LoggerVendedor.h"
-#include "../common/memCompartida/MemCompartida.h" 
 #include "../common/Constants.h" 			// archivoColaComprarBoletos
 
-#include "../common/cola/ColaEscritura.h"
-#include "../common/cola/ColaLectura.h"
+#include "../common/fifos/FifoHandler.h"		// fifos
+#include "../common/fifos/FifoLectura.h"		// fifos
 
 using namespace std;
 
@@ -23,25 +22,29 @@ class Vendedor {
 		~Vendedor();	
 
 		// atiende a los clientes en orden de llegada 
-		void atenderClientes() const;
+		void atenderClientes();
+
+		// TODO a ser llamada al recibir una señal para cerrar
+		// por parte del administrador de la calecita
+		void cerrar();
 
 	private:
-		ColaLectura canal;
-		MemoriaCompartida<bool> cerroLaCalecita;
+		FifoLectura colaParaComprarBoleto;
+		bool abierto;
 
-		// espera a que aparezca un nuevo cliente y retorna su pid
-		int esperarCliente() const;
+		// incrementa la caja en "precio"
+		int incrementarCaja();
 
 		// atiende a un cliente
 		// envia una señal al cliente para iniciar la interacción
 		// luego recibe el dinero por parte de éste, de ser suficiente, le retorna el vuelto
 		// si no, le retorna el total
-		void atenderCliente(int pid) const;
+		void atenderCliente(int pid);
 };
 
 // constructor
-Vendedor::Vendedor():canal(ARCHCOLACOMPRARBOLETOS),cerroLaCalecita(ARCHBOLETERIACERRADA,CODEBOLETERIACERRADA){
-	cerroLaCalecita.escribir(false);
+Vendedor::Vendedor():colaParaComprarBoleto(ARCHCOLACOMPRARBOLETOS),abierto(true){
+	colaParaComprarBoleto.abrir();
 }	
 
 // destructor
@@ -50,50 +53,51 @@ Vendedor::~Vendedor(){
 }	
 	
 // atiende a los clientes en orden de llegada 
-void Vendedor::atenderClientes() const{
+void Vendedor::atenderClientes(){
 	// TODO borrar (para dar tiempo a los clientes de acumularse en la fila)
 	sleep(20);
 
 	do{
-		int pid = esperarCliente();
+		int pid = FifoHandler::leer(colaParaComprarBoleto);
 
-		if(!cerroLaCalecita.leer() && (pid != COLAVACIA))
-			atenderCliente(pid);
-	}while(!cerroLaCalecita.leer());
-}
-
-// espera a que aparezca un nuevo cliente y retorna su pid
-int Vendedor::esperarCliente() const{
-	int pid=0;
-	do{
-		pid = canal.pop();
-		cout << pid << endl;
-	}while((pid == COLAVACIA) && !cerroLaCalecita.leer());
-	return pid;
+		if(abierto && (pid != 0))
+			atenderCliente(pid);	// TODO parece haber un problema cuando se vacia
+	}while(abierto);			// intenta atender 2 veces al último cliente...
 }
 
 // atiende a un cliente
 // envia una señal al cliente para iniciar la interacción
 // luego recibe el dinero por parte de éste, de ser suficiente, le retorna el vuelto
 // si no, le retorna el total
-void Vendedor::atenderCliente(int pid) const{
+void Vendedor::atenderCliente(int pid){
 	LoggerVendedor::logAtendiendoA(pid);
 	kill(pid,SIGNALCLIENTEVENDEDOR);
 
-	ColaEscritura enviar(ARCHCOMUNICACIONCLIENTEVENDEDOR2);
-	ColaLectura recibir(ARCHCOMUNICACIONCLIENTEVENDEDOR);
+	int presupuesto = FifoHandler::leer(ARCHCOMUNICACIONCLIENTEVENDEDOR);
 
-	int presupuesto = 0;
-	do{
-		presupuesto = recibir.pop();
-	}while((presupuesto == COLAVACIA) && !cerroLaCalecita.leer());
-
-	if (presupuesto >= PRECIOBOLETO)
-		enviar.push(presupuesto-PRECIOBOLETO);
-	else
-		enviar.push(presupuesto);
-
+	if (presupuesto >= PRECIOBOLETO){
+		int caja = incrementarCaja();
+		LoggerVendedor::logAtendido(pid,caja);
+		FifoHandler::escribir(ARCHCOMUNICACIONCLIENTEVENDEDOR2,presupuesto-PRECIOBOLETO); 	
+	}else{
+		LoggerVendedor::logNoLeAlcanzaba(pid);
+		FifoHandler::escribir(ARCHCOMUNICACIONCLIENTEVENDEDOR2,presupuesto); 	
+	}
 }
+
+// incrementa la caja en "precio"
+int Vendedor::incrementarCaja(){
+	FifoHandler::escribir(ARCHGENTEESPERANDOUSARLACAJA,PRECIOBOLETO);
+	return FifoHandler::leer(ARCHCAJAVENDEDOR);
+}
+
+// TODO a ser llamada al recibir una señal para cerrar
+// por parte del administrador de la calecita
+void Vendedor::cerrar(){
+	abierto = false;
+	// TODO notificar gente en la cola
+}
+
 #endif
 
 

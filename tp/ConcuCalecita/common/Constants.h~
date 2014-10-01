@@ -6,8 +6,6 @@
 	// TODO hacer configurable
 	//static double tiempoMaxDeEsperaSinClientes = 100000;
 
-	static int COLAVACIA = -1;
-
 	static int TIEMPODEVUELTA = 10;
 	static unsigned CLIENTESPORVUELTA = 5;
 
@@ -24,9 +22,16 @@
 	const char* ARCHCOLACOMPRARBOLETOS = "/tmp/comprarBoletos";
 	const char* ARCHCOLACSUBIRSEALACALECITA = "/tmp/subirseCalecita";
 
+	const char* ARCHCAJAVENDEDOR = "/tmp/cajavendedor";
+	const char* ARCHCAJAADMIN = "/tmp/cajaadmin";
+	const char* ARCHGENTEESPERANDOUSARLACAJA = "/tmp/esperandocaja";
+
+	static int QUIEROCONSULTARCAJA = -1;
+
 	static int SIGNALCLIENTECALECITA = 11;
 	static int SIGNALTERMINOCALECITA = 12; 
 
+	const char* ARCHIVOLOGADMIN = "logs/logAdmin";
 	const char* ARCHIVOLOGCLIENTES = "logs/logClientes";
 	const char* ARCHIVOLOGVENDEDOR = "logs/logVendedor";
 	const char* ARCHIVOLOGCALECITA = "logs/logCalecita";

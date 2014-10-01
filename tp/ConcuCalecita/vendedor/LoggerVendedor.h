@@ -20,6 +20,15 @@ class LoggerVendedor{
 		static void logAtendiendoA(int pid);
 
 		// esctibe un mensaje en el log indicando que el
+		// vendedor ha atendiendo al cliente satisfactoriamente	
+		static void logAtendido(int pid,int cash);
+
+		// esctibe un mensaje en el log indicando que el
+		// vendedor no ha podido vender el boleto 
+		// por que el cliente no tenia suficiente dinero
+		static void logNoLeAlcanzaba(int pid);
+
+		// esctibe un mensaje en el log indicando que el
 		// vendedor esta cerrando las puertas		
 		static void logCerrando();
 };
@@ -49,6 +58,24 @@ void LoggerVendedor :: logCerrando(){
 	stream << "cerrando las persianas. " << endl;
 	LoggerVendedor::log(stream.str());
 }
+
+// esctibe un mensaje en el log indicando que el
+// vendedor ha atendiendo al cliente satisfactoriamente	
+void LoggerVendedor :: logAtendido(int pid,int cash){
+	std::ostringstream stream;
+	stream << "el cliente " << pid << " ha comprado un boleto, dinero en la caja: " << cash << endl;
+	LoggerVendedor::log(stream.str());
+}
+
+// esctibe un mensaje en el log indicando que el
+// vendedor no ha podido vender el boleto 
+// por que el cliente no tenia suficiente dinero
+void LoggerVendedor :: logNoLeAlcanzaba(int pid){
+	std::ostringstream stream;
+	stream << "el cliente " << pid << " no poseia suficiente dinero para pagar el boleto" << endl;
+	LoggerVendedor::log(stream.str());
+}
+
 
 #endif
 

@@ -1,5 +1,5 @@
 #include "admin.h" 	// Administrador
-#include<iostream>
+#include <iostream>
 
 using namespace std;
 
@@ -12,7 +12,7 @@ int main (int argc, char** argv) {
 	char sn;
 	cin >> sn;
 
-	if(sn)
+	if(sn != 'n')
 		admin.CerrarCalecita();
 
 	return 0;
