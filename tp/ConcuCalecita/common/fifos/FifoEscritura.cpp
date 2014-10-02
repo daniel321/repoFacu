@@ -4,7 +4,6 @@ FifoEscritura::FifoEscritura(const std::string nombre) : Fifo(nombre) {
 }
 
 FifoEscritura::~FifoEscritura() {
-	close(fd);
 }
 
 void FifoEscritura::abrir() {

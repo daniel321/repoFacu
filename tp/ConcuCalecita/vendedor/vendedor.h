@@ -85,10 +85,12 @@ void Vendedor::atenderCliente(int pid){
 	}
 }
 
+//int caja = 0;
 // incrementa la caja en "precio"
 int Vendedor::incrementarCaja(){
 	FifoHandler::escribir(ARCHGENTEESPERANDOUSARLACAJA,PRECIOBOLETO);
 	return FifoHandler::leer(ARCHCAJAVENDEDOR);
+//	caja+= PRECIOBOLETO;
 }
 
 // TODO a ser llamada al recibir una señal para cerrar

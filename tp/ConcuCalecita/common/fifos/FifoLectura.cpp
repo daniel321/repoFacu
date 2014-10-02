@@ -4,7 +4,6 @@ FifoLectura::FifoLectura(const std::string nombre) : Fifo(nombre) {
 }
 
 FifoLectura::~FifoLectura() {
-	close(fd);
 }
 
 void FifoLectura::abrir() {

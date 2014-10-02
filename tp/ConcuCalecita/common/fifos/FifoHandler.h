@@ -10,7 +10,6 @@ class FifoHandler {
 	static void escribir(const char* path,int dato){
 		FifoEscritura fifo(path);
 		fifo.abrir();
-	
 		escribir(fifo,dato);
 	}
 
