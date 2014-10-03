@@ -9,11 +9,11 @@ class FifoHandler {
 
 	static void escribir(const char* path,int dato){
 		FifoEscritura fifo(path);
+		fifo.abrir();
 		escribir(fifo,dato);
 	}
 
 	static void escribir(FifoEscritura fifo,int dato){
-		fifo.abrir();
 		fifo.escribir(&dato,sizeof(int));
 	}
 
@@ -25,12 +25,10 @@ class FifoHandler {
 	}
 
 	static int leer(FifoLectura fifo){
-		fifo.abrir();
-
-		int valor;
+		int valor,tam;
 		do{
-			int tam = fifo.leer(&valor,sizeof(int));
-		} while(valor == 0);
+			tam = fifo.leer(&valor,sizeof(int));
+		} while(valor == 0 && tam == sizeof(int));
 	
 		return valor;
 	}

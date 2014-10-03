@@ -25,10 +25,10 @@ class FifoHandler {
 	}
 
 	static int leer(FifoLectura fifo){
-		int valor;
+		int valor = 0,tam = 0;
 		do{
-			int tam = fifo.leer(&valor,sizeof(int));
-		} while(valor == 0);
+			tam = fifo.leer(&valor,sizeof(int));
+		} while(valor == 0 && tam == sizeof(int));
 	
 		return valor;
 	}
