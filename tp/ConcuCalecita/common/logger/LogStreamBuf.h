@@ -15,11 +15,12 @@ class LogStreamBuf : public std::stringbuf
 		LogStreamBuf(const char* path);
 		virtual ~LogStreamBuf();
 		/**
-		 * Función que efectivamente realiza el flusheo de datos
+		 * Función que efectivamente realiza el flusheo de datos, es llamada por el ostream
 		 */
 		virtual int sync ();
-	private:
+	protected:
 		int fileDescriptor;
+	private:
 		/**
 		 * Devuelve un string con el timestamp actual en formato humanamente legible
 		 */

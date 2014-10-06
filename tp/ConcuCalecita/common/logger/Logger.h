@@ -12,10 +12,11 @@ namespace Common
  */
 class Logger : public std::ostream
 {
-	private:
-		Common::LogStreamBuf buffer;
+	protected:
+		Common::LogStreamBuf* buffer;
+		Logger();
 	public:
-		Logger(const char path[]);
+		Logger(Common::LogStreamBuf * buffer);
 		virtual ~Logger();
 };
 

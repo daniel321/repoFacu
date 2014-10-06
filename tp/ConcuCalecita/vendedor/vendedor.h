@@ -7,6 +7,7 @@
 #include "../common/fifos/FifoHandler.h"
 #include "../common/fifos/FifoLectura.h"
 #include "../common/logger/Logger.h"
+#include "../common/logger/LogStreamBuf.h"
 #include "../common/Constants.h"
 
 const char archLog[] = "logs/logVendedor";
@@ -42,7 +43,9 @@ class Vendedor {
 };
 
 // constructor
-Vendedor::Vendedor() : colaParaComprarBoleto(ARCHCOLACOMPRARBOLETOS), abierto(true), log(archLog){
+Vendedor::Vendedor() : colaParaComprarBoleto(ARCHCOLACOMPRARBOLETOS), abierto(true),
+		log(new Common::LogStreamBuf(archLog))
+{
 	colaParaComprarBoleto.abrir();
 }	
 
@@ -54,7 +57,7 @@ Vendedor::~Vendedor(){
 // atiende a los clientes en orden de llegada 
 void Vendedor::atenderClientes(){
 	// TODO borrar (para dar tiempo a los clientes de acumularse en la fila)
-	sleep(20);
+	sleep(5);
 
 	do{
 		int pid = FifoHandler::leer(colaParaComprarBoleto);

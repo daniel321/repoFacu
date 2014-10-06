@@ -1,6 +1,11 @@
 #include "client.h" 	// Cliente
 #include <stdlib.h>	// atoi
 
+/**
+ * Arguemtnos esperados:
+ * 1 - Dinero
+ * 2 - Si ya tiene boleto
+ */
 int main (int argc, char** argv)
 {
 	try

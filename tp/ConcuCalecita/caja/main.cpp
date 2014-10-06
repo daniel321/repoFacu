@@ -1,5 +1,6 @@
 #include "Caja.h" 	// caja
 #include <stdlib.h>	// atoi
+#include <iostream>
 
 int main (int argc, char** argv)
 {

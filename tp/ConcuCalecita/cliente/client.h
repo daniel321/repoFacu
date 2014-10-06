@@ -11,6 +11,7 @@
 #include "../common/Constants.h" 			// archivo,code	
 #include "../common/fifos/FifoHandler.h"
 #include "../common/logger/Logger.h"
+#include "../common/logger/LogStreamBufSinc.h"
 
 const char archLog[]  = "logs/logClientes";
 
@@ -52,7 +53,8 @@ class Cliente {
 };
 
 Cliente::Cliente(int presup,bool boleto)
-	:	tengoBoleto(boleto), meCerraronLaCalesita(false), cash(presup), id(getpid()), log(archLog) {}
+	:	tengoBoleto(boleto), meCerraronLaCalesita(false), cash(presup),
+	 	id(getpid()), log(new Common::LogStreamBufSinc(archLog)) {}
 
 Cliente::~Cliente()
 {

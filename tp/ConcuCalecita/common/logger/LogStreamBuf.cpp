@@ -13,15 +13,12 @@ namespace Common
 LogStreamBuf::LogStreamBuf(const char* path) : fileDescriptor(0)
 {
 	fileDescriptor = ::open(path, O_WRONLY | O_APPEND | O_CREAT, S_IRWXU);
-	if (fileDescriptor == -1)
-	{
-		throw std::ios_base::failure(strerror(errno));
-	}
+	if (fileDescriptor == -1) throw std::ios_base::failure(strerror(errno));
 }
 
 LogStreamBuf::~LogStreamBuf()
 {
-	close(fileDescriptor);
+	if (fileDescriptor != 0) close(fileDescriptor);
 }
 
 std::string LogStreamBuf::timestamp()

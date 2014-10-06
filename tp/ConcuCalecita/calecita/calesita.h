@@ -9,6 +9,7 @@
 #include "../common/fifos/FifoHandler.h"
 #include "../common/fifos/FifoLectura.h"
 #include "../common/logger/Logger.h"
+#include "../common/logger/LogStreamBuf.h"
 
 const char archLog[] = "logs/logCalesita";
 
@@ -48,7 +49,7 @@ class Calesita {
 };
 
 // constructor
-Calesita::Calesita() : colaParaEntrar(ARCHCOLACSUBIRSEALACALECITA), abierto(true), log(archLog)
+Calesita::Calesita() : colaParaEntrar(ARCHCOLACSUBIRSEALACALECITA), abierto(true), log(new Common::LogStreamBuf(archLog))
 {
 	colaParaEntrar.abrir();
 }	

@@ -3,6 +3,7 @@
 
 #include "../common/Constants.h"
 #include "../common/logger/Logger.h"
+#include "../common/logger/LogStreamBuf.h"
 #include "../common/fifos/FifoHandler.h"
 
 const char archLog[] = "logs/logAdmin";
@@ -10,7 +11,7 @@ const char archLog[] = "logs/logAdmin";
 class Administrador
 {
 	public:
-		Administrador () : log(archLog) {}
+		Administrador () : log(new Common::LogStreamBuf(archLog)) {}
 		/**
 		 * Intenta consultar la el dinero de la recaudacion de la calecita
 		 */
