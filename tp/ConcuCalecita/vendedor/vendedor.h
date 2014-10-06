@@ -4,21 +4,19 @@
 #include <iostream>
 #include <signal.h>					// kill
 
-#include "LoggerVendedor.h"
-#include "../common/Constants.h" 			// archivoColaComprarBoletos
+#include "../common/fifos/FifoHandler.h"
+#include "../common/fifos/FifoLectura.h"
+#include "../common/logger/Logger.h"
+#include "../common/Constants.h"
 
-#include "../common/fifos/FifoHandler.h"		// fifos
-#include "../common/fifos/FifoLectura.h"		// fifos
+const char archLog[] = "logs/logVendedor";
 
 using namespace std;
 
 class Vendedor {
 
 	public:
-		// constructor
 		Vendedor();	
-
-		// destructor
 		~Vendedor();	
 
 		// atiende a los clientes en orden de llegada 
@@ -31,6 +29,7 @@ class Vendedor {
 	private:
 		FifoLectura colaParaComprarBoleto;
 		bool abierto;
+		Common::Logger log;
 
 		// incrementa la caja en "precio"
 		int incrementarCaja();
@@ -43,13 +42,13 @@ class Vendedor {
 };
 
 // constructor
-Vendedor::Vendedor():colaParaComprarBoleto(ARCHCOLACOMPRARBOLETOS),abierto(true){
+Vendedor::Vendedor() : colaParaComprarBoleto(ARCHCOLACOMPRARBOLETOS), abierto(true), log(archLog){
 	colaParaComprarBoleto.abrir();
 }	
 
 // destructor
 Vendedor::~Vendedor(){
-	LoggerVendedor::logCerrando();
+	log << "Cerrando las persianas." << endl;
 }	
 	
 // atiende a los clientes en orden de llegada 
@@ -70,17 +69,17 @@ void Vendedor::atenderClientes(){
 // luego recibe el dinero por parte de éste, de ser suficiente, le retorna el vuelto
 // si no, le retorna el total
 void Vendedor::atenderCliente(int pid){
-	LoggerVendedor::logAtendiendoA(pid);
+	log << "Atendiendo al cliente " << pid << "." << endl;
 	kill(pid,SIGNALCLIENTEVENDEDOR);
 
 	int presupuesto = FifoHandler::leer(ARCHCOMUNICACIONCLIENTEVENDEDOR);
 
 	if (presupuesto >= PRECIOBOLETO){
 		int caja = incrementarCaja();
-		LoggerVendedor::logAtendido(pid,caja);
+		log << "El cliente " << pid << " ha comprado un boleto. Dinero en la caja: " << caja << "." << endl;
 		FifoHandler::escribir(ARCHCOMUNICACIONCLIENTEVENDEDOR2,presupuesto-PRECIOBOLETO); 	
 	}else{
-		LoggerVendedor::logNoLeAlcanzaba(pid);
+		log << "El cliente " << pid << " no poseia suficiente dinero para pagar el boleto" << endl;
 		FifoHandler::escribir(ARCHCOMUNICACIONCLIENTEVENDEDOR2,presupuesto); 	
 	}
 }

@@ -1,46 +1,42 @@
 #ifndef ADMIN_H
 #define ADMIN_H
 
-#include "../common/Constants.h" 			// archivo,code
-#include "LoggerAdmin.h"	 			// logger
-#include "../common/fifos/FifoHandler.h"		// fifos
+#include "../common/Constants.h"
+#include "../common/logger/Logger.h"
+#include "../common/fifos/FifoHandler.h"
 
-using namespace std;
+const char archLog[] = "logs/logAdmin";
 
-class Administrador {
-
+class Administrador
+{
 	public:
-		// constructor
-		Administrador();	
-
-		// destructor
-		~Administrador();	
-
-		// intenta consultar la el dinero de la recaudacion de la calecita
+		Administrador () : log(archLog) {}
+		/**
+		 * Intenta consultar la el dinero de la recaudacion de la calecita
+		 */
 		void consultarCaja();
 
-		// cierra la calecita
-		void CerrarCalecita();
+		/**
+		 * Cierra la calesita???
+		 * TODO: Revisar como manejar estas cuestiones
+		 */
+		void cerrarCalesita();
+
+	private:
+		Common::Logger log;
 
 };
-
-// constructor
-Administrador::Administrador(){}	
-
-// destructor
-Administrador::~Administrador(){}	
 	
-// intenta consultar la el dinero de la recaudacion de la calecita
 void Administrador::consultarCaja(){
 	FifoHandler::escribir(ARCHGENTEESPERANDOUSARLACAJA,QUIEROCONSULTARCAJA);
 	sleep(1);
 	int caja = FifoHandler::leer(ARCHCAJAADMIN);
-	LoggerAdmin::logCaja(caja);
+	log << "El administrador consulto la caja, habían: " << caja << "$." << std::endl;
 }
 
-// TODO cierra la calecita
-void Administrador::CerrarCalecita(){
-	LoggerAdmin::logCerrar();
+void Administrador::cerrarCalesita()
+{
+	log << "El administrador dio la orden de cerrar la calecita." << std::endl;
 }
 
 #endif

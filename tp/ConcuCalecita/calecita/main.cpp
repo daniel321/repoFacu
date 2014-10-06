@@ -1,9 +1,9 @@
-#include "calecita.h" 	// Calecita
+#include "calesita.h" 	// Calecita
 
 int main (int argc, char** argv) {
 
-	Calecita calecita;
-	calecita.operar();
+	Calesita calesita;
+	calesita.operar();
 
 	return 0;
 }

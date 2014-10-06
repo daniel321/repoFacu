@@ -1,15 +1,20 @@
 #include "admin.h" 	// Administrador
+
 #include <iostream>
 
-using namespace std;
-
-int main (int argc, char** argv) {
-
-	Administrador admin;
-	admin.consultarCaja();
-	admin.CerrarCalecita();
-
-	return 0;
+int main (int argc, char** argv)
+{
+	try
+	{
+		Administrador admin;
+		admin.consultarCaja();
+		admin.cerrarCalesita();
+		return 0;
+	}
+	catch (std::exception &e)
+	{
+		std::cout << e.what() << std::endl;
+	}
 }
 
 

@@ -58,34 +58,6 @@ CXXSTD = c++98
 # VARIABLES CALCULADAS A PARTIR DE LA CONFIGURACION
 ####################################################
 
-# Agrego flags y libs de GTK+ de ser necesario.
-ifdef gtk
-CFLAGS += $(shell pkg-config --cflags gtk+-2.0)
-LDFLAGS += $(shell pkg-config --libs gtk+-2.0)
-endif
-
-# Agrego flags y libs de gtkmm de ser necesario.
-ifdef gtkmm
-CFLAGS += $(shell pkg-config --cflags gtkmm-2.4)
-LDFLAGS += $(shell pkg-config --libs gtkmm-2.4)
-endif
-
-# Agrego flags y libs de gthreads de ser necesario.
-ifdef gthreads
-CFLAGS += $(shell pkg-config --cflags gthread-2.0)
-LDFLAGS += $(shell pkg-config --libs gthread-2.0)
-endif
-
-# Linkeo con libm de ser necesario.
-ifdef math
-LDFLAGS += -lm
-endif
-
-# Linkeo con pthreads de ser necesario.
-ifdef pthreads
-LDFLAGS += -lpthread -pthread
-endif
-
 ifdef static
 LDFLAGS += -static
 endif
@@ -125,6 +97,7 @@ fuentes_common = $(wildcard common/*.$(extension))
 fuentes_common += $(wildcard common/fifos/*.$(extension))
 fuentes_common += $(wildcard common/memeCompartida/*.$(extension))
 fuentes_common += $(wildcard common/signals/*.$(extension))
+fuentes_common += $(wildcard common/logger/*.$(extension))
 
 
 # REGLAS

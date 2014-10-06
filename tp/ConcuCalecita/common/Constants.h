@@ -31,10 +31,7 @@
 	static int SIGNALCLIENTECALECITA = 11;
 	static int SIGNALTERMINOCALECITA = 12; 
 
-	const char* ARCHIVOLOGADMIN = "logs/logAdmin";
-	const char* ARCHIVOLOGCLIENTES = "logs/logClientes";
 	const char* ARCHIVOLOGVENDEDOR = "logs/logVendedor";
-	const char* ARCHIVOLOGCALECITA = "logs/logCalecita";
 
 #endif
 

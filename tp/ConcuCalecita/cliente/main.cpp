@@ -13,7 +13,7 @@ int main (int argc, char** argv) {
 
 	Cliente cliente(presupuesto,tieneBoleto);
 	cliente.comprarBoleto();
-	cliente.subirseALaCalecita();
+	cliente.subirseALaCalesita();
 	
 	return 0;
 }
