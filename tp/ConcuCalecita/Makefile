@@ -175,7 +175,7 @@ calecita: $(o_calecita_files)
 
 
 clean:
-	@$(RM) -fv *.o *~ caja/*.o common/fifos/*.o common/memCompartida/*.o common/signals/*.o calecita/*.o administrador/*.o cliente/*.o vendedor/*.o logs/* client.exe admin.exe vendedor.exe calecita.exe caja.exe
+	@$(RM) -fv *.o *~ caja/*.o common/fifos/*.o common/memCompartida/*.o common/signals/*.o common/logger/*.o calecita/*.o administrador/*.o cliente/*.o vendedor/*.o logs/* client.exe admin.exe vendedor.exe calecita.exe caja.exe
 
 
 

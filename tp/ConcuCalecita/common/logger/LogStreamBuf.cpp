@@ -34,7 +34,6 @@ std::string LogStreamBuf::timestamp()
 
 int LogStreamBuf::sync ()
 {
-	std::cout << "flushed" << std::endl;
 	std::string linea("["+timestamp()+"] "+str());
 	ssize_t retorno = 0;
 	ssize_t largoInicial = linea.length();
