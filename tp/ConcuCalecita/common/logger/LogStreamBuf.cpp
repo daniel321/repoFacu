@@ -37,10 +37,12 @@ int LogStreamBuf::sync ()
 	ssize_t faltaEscribir = linea.length();
 	while (faltaEscribir > 0)
 	{
-		retorno = ::write(fileDescriptor, (void*)(linea.c_str() + largoInicial - faltaEscribir), faltaEscribir);
+		retorno = ::write(fileDescriptor, (char*)(linea.c_str() + largoInicial - faltaEscribir), faltaEscribir);
 		if (retorno == -1) throw std::ios_base::failure(strerror(errno));
 		faltaEscribir -= retorno;
 	}
+	retorno = ::fsync(fileDescriptor);
+	if (retorno == -1) throw std::ios_base::failure(strerror(errno));
 	str("");
 	return 0;
 }
