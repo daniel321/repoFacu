@@ -1,0 +1,37 @@
+#include <stdio.h>
+
+void signal(int id);
+void wait(int id);
+
+int main(){
+	return 0;
+}
+
+
+void signal(int id){
+	struct sembuf op;
+	op.sem_num = 0;
+	op.sem_op = 1;
+	op.sem_flg = SEM_UNDO;
+
+	semop(id,&op,1);
+}
+
+void wait(int id){
+	struct sembuf op;
+	op.sem_num = 0;
+	op.sem_op = -1;
+	op.sem_flg = SEM_UNDO;
+
+	semop(id,&op,1);
+}
+
+
+
+
+
+
+
+
+
+
