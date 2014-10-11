@@ -1,0 +1,9 @@
+
+all: fork
+
+fork:
+	gcc padre.c -o padre -std=c99;
+	gcc hijo.c -o hijo -std=c99;
+	./padre;
+	rm padre hijo;
+

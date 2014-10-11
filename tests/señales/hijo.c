@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <signal.h>
+
+void handler3(int signum);
+void handler5(int signum);
+
+int main(){
+	sigset_t set;
+	sigprocmask(SIG_BLOCK,NULL,&set); // obtengo set
+	sigaddset(&set,2);		  // agrego señal 2	
+	sigprocmask(SIG_BLOCK,&set,NULL); // bloqueo señal 2 
+
+	//-----------------------------------------------------
+
+	signal(3,&handler3);		// asigno el handler a la señal 3 con signal
+
+	//-----------------------------------------------------
+
+	struct sigaction sa;		
+	sigemptyset(&sa.sa_mask);	// vacio el set
+	sigaddset(&sa.sa_mask,5);	// agrego señales a manejar
+	sa.sa_handler = handler5;	// asigno handler
+
+	sigaction(5,&sa,0);		// asigno handler a señal 5 con sigaction
+
+	//-----------------------------------------------------
+
+	sleep(999999);	// si llega una señal 3 o 5, se llaman los handlers, entonces se sale del sleep y se imprime un mensaje
+			// si llega una señal 2, no pasa nada xq se la bloqueo (sigue con el sleep)
+			// si llega una señal distinta se llama al handler x default q cierra el programa
+	return 0;
+}
+
+void handler5(int signum){
+	printf("llego señal 5\n");
+}
+
+void handler3(int signum){
+	printf("llego señal 3\n");
+}
+
+
+
+
+
+
+
+
+
+
+

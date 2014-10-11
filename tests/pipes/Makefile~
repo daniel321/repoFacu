@@ -1,0 +1,8 @@
+
+all: fork
+
+fork:
+	g++ padre.cpp -o padre;
+	./padre;
+	rm padre;
+

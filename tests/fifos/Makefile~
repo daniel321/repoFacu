@@ -1,0 +1,9 @@
+
+all: fork
+
+fork:
+	g++ padre.c -o padre;
+	g++ hijo.c -o hijo;
+	./padre;
+	rm padre hijo;
+
