@@ -1,17 +1,31 @@
 #include "Fifo.h"
 
-Fifo::Fifo(const std::string nombre) : nombre(nombre), fd(-1) {
-	mknod ( static_cast<const char*>(nombre.c_str()),S_IFIFO|0666,0 );
+#include "../exception/ErrnoWrap.h"
+#include <errno.h>
+
+Fifo::Fifo(const std::string nombre) : nombre(nombre), fd(-1)
+{
+	int ret = ::mknod ( nombre.c_str(),S_IFIFO|0666,0 );
+	if (ret == -1 && errno != EEXIST) throw Common::ErrnoWrap("Error al crear fifo.");
 }
 
-Fifo::~Fifo() {
+Fifo::~Fifo()
+{
+	cerrar();
 }
 
 void Fifo::cerrar() {
-	close ( fd );
-	fd = -1;
+	if (fd != -1)
+	{
+		int ret = ::close ( fd );
+		if (ret == -1) throw Common::ErrnoWrap("Error al cerrar fifo.");
+		fd = -1;
+	}
 }
 
-void Fifo::eliminar() const {
-	unlink ( nombre.c_str() );
+void Fifo::eliminar()
+{
+	cerrar();
+	int ret = ::unlink ( nombre.c_str() );
+	if (ret == -1) throw Common::ErrnoWrap("Error al eliminar fifo.");
 }

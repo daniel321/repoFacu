@@ -98,7 +98,7 @@ fuentes_common += $(wildcard common/fifos/*.$(extension))
 fuentes_common += $(wildcard common/memeCompartida/*.$(extension))
 fuentes_common += $(wildcard common/signals/*.$(extension))
 fuentes_common += $(wildcard common/logger/*.$(extension))
-
+fuentes_common += $(wildcard common/exception/*.$(extension))
 
 # REGLAS
 #########
@@ -175,7 +175,7 @@ calecita: $(o_calecita_files)
 
 
 clean:
-	@$(RM) -fv *.o *~ caja/*.o common/fifos/*.o common/memCompartida/*.o common/signals/*.o common/logger/*.o calecita/*.o administrador/*.o cliente/*.o vendedor/*.o logs/* client.exe admin.exe vendedor.exe calecita.exe caja.exe
+	@$(RM) -fv *.o *~ caja/*.o common/fifos/*.o common/memCompartida/*.o common/signals/*.o common/logger/*.o common/exception/*.o calecita/*.o administrador/*.o cliente/*.o vendedor/*.o logs/* client.exe admin.exe vendedor.exe calecita.exe caja.exe
 
 
 

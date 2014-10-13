@@ -1,6 +1,7 @@
 #include "client.h" 	// Cliente
 #include <stdlib.h>	// atoi
 
+#include "../common/exception/ErrnoWrap.h"
 /**
  * Arguemtnos esperados:
  * 1 - Dinero
@@ -26,7 +27,7 @@ int main (int argc, char** argv)
 	}
 	catch (std::exception &e)
 	{
-		std::cout << e.what() << std::endl;
+		std::cout << "Cliente " << ::getpid() << " : " << e.what() << std::endl;
 	}
 }
 

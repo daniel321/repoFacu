@@ -13,7 +13,7 @@ public:
 	virtual ~Fifo();
 	virtual void abrir() = 0;
 	void cerrar();
-	void eliminar() const;
+	void eliminar();
 
 protected:
 	std::string nombre;

@@ -9,8 +9,7 @@ public:
 	~FifoEscritura();
 
 	void abrir();
-	ssize_t escribir(const void* buffer,const ssize_t buffsize) const;
-	void borrarContenido() const;
+	void escribir(const void* buffer,const ssize_t buffsize) const;
 };
 
 #endif /* FIFOESCRITURA_H_ */

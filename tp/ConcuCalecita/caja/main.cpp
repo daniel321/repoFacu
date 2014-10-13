@@ -17,7 +17,7 @@ int main (int argc, char** argv)
 	}
 	catch (std::exception &e)
 	{
-		std::cout << e.what() << std::endl;
+		std::cout << "Caja " << ::getpid() << " : " << e.what() << std::endl;
 	}
 }
 
