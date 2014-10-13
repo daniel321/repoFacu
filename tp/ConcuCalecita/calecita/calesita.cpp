@@ -5,11 +5,23 @@
 #include "../common/Constants.h" 			// archivo,code
 #include "../common/fifos/FifoHandler.h"
 #include "../common/logger/LogStreamBuf.h"
+#include "../common/signals/SignalHandler.h"
+#include "../common/signals/VoidHandler.h"
+#include "../common/exception/ErrnoWrap.h"
+#include "../common/exception/InterruptException.h"
 
 const char archLog[] = "logs/logCalesita";
 
-Calesita::Calesita() : colaParaEntrar(ARCHCOLACSUBIRSEALACALECITA), abierto(true), log(new Common::LogStreamBuf(archLog))
+static int TiempoDeVuelta = 5;
+static const int TimeoutCalesita = 10;
+static int ClientesPorVuelta = 5;
+
+Calesita::Calesita() : colaParaEntrar(ArchColaCalesita), abierto(true), log(new Common::LogStreamBuf(archLog))
 {
+	SignalHandler::getInstance()->registrarHandler(SIGALRM, new VoidHandler());
+	int interrupt = siginterrupt(SIGALRM, 1);
+	if (interrupt == -1) throw Common::ErrnoWrap();
+	log << "Abriendo la calesita." << endl;
 	colaParaEntrar.abrir();
 }
 
@@ -20,42 +32,46 @@ Calesita::~Calesita(){
 void Calesita::operar(){
 	do{
 		log << "Calesita esperando que llegue mas gente." << endl;
-		esperarClientes();
-		// TODO reset timeout
+		if (abierto) esperarClientes();
 		log << "Calesita dando una vuelta con " << pids.size() << " pasajeros." << endl;
 		darVuelta();
 		log << "Calesita termino de dar la vuelta." << endl;
-	}while(abierto);
-
-	if(pids.size() > 0){
-		log << "Calesita dando una vuelta con " << pids.size() << " pasajeros." << endl;
-		darVuelta();
-		log << "Calesita termino de dar la vuelta." << endl;
-	}
+	} while(abierto || pids.size() > 0);
 
 }
 
-void Calesita::esperarClientes(){
+void Calesita::esperarClientes()
+{
+	bool timeOut = false;
+	int pid = 0;
 	do{
-		int pid = FifoHandler::leer(colaParaEntrar);
-
-		if(pid != 0) {
-			kill(pid,SIGNALCLIENTECALECITA);
-			pids.push_back(pid);
+		timeOut = false;
+		pid = 0;
+		alarm(TimeoutCalesita);
+		try
+		{
+			pid = FifoHandler::leer(colaParaEntrar);
+			if(pid != 0)
+			{
+				kill(pid,SigClienteCalesita);
+				pids.push_back(pid);
+			}
 		}
-	}while((pids.size() < CLIENTESPORVUELTA) && abierto);
-}
-
-// TODO a ser llamado por un timeout
-void Calesita::arrancarVueltaPrematuramente(){
-	darVuelta();
+		catch (Common::InterruptException &e)
+		{
+			log << "Timeout de la calesita. Hay " << pids.size() << " niños arriba." << std::endl;
+			timeOut = true;
+		}
+		alarm(0);
+	} while( ((pids.size() < ClientesPorVuelta) && !(pid == 0 && timeOut && pids.size() > 0))
+			&& abierto);
 }
 
 void Calesita::darVuelta(){
-	sleep(TIEMPODEVUELTA);
+	sleep(TiempoDeVuelta);
 
 	for (list<int>::const_iterator iterator = pids.begin(); iterator != pids.end(); ++iterator)
-		kill(*iterator,SIGNALTERMINOCALECITA);
+		kill(*iterator,SigTerminoCalesita);
 	pids.clear();
 }
 

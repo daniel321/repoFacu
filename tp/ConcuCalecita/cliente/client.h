@@ -2,7 +2,7 @@
 #define CLIENT_H
 
 #include "../common/logger/Logger.h"
-#include "../common/signals/Handler.h"
+#include "../common/signals/BoolHandler.h"
 
 class Cliente {
 
@@ -36,7 +36,7 @@ class Cliente {
 		Common::Logger log;
 
 		// el cliente se agrega a si mismo a una cola y espera ser atendido
-		void esperarEnLaCola(const char* pathCola,Handler& handler);
+		void esperarEnLaCola(const char* pathCola,BoolHandler& handler);
 };
 
 #endif

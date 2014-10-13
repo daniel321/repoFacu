@@ -92,7 +92,7 @@ fuentes_client = $(wildcard cliente/*.$(extension))
 fuentes_admin = $(wildcard administrador/*.$(extension))
 fuentes_vendedor = $(wildcard vendedor/*.$(extension))
 fuentes_caja = $(wildcard caja/*.$(extension))
-fuentes_calecita = $(wildcard calecita/*.$(extension))
+fuentes_calesita = $(wildcard calecita/*.$(extension))
 fuentes_common = $(wildcard common/*.$(extension))
 fuentes_common += $(wildcard common/fifos/*.$(extension))
 fuentes_common += $(wildcard common/memeCompartida/*.$(extension))
@@ -105,19 +105,20 @@ fuentes_common += $(wildcard common/exception/*.$(extension))
 
 .PHONY: all clean
 
-all: client admin vendedor caja calecita
+all: client admin vendedor caja calesita
 
 o_common_files = $(patsubst %.$(extension),%.o,$(fuentes_common))
 o_client_files = $(o_common_files) $(patsubst %.$(extension),%.o,$(fuentes_client)) 
 o_admin_files = $(o_common_files) $(patsubst %.$(extension),%.o,$(fuentes_admin))
 o_vendedor_files = $(o_common_files) $(patsubst %.$(extension),%.o,$(fuentes_vendedor))
 o_caja_files = $(o_common_files) $(patsubst %.$(extension),%.o,$(fuentes_caja)) 
-o_calecita_files =  $(o_common_files) $(patsubst %.$(extension),%.o,$(fuentes_calecita))
+o_calesita_files =  $(o_common_files) $(patsubst %.$(extension),%.o,$(fuentes_calesita))
 
 test: 
 	./vendedor.exe&
 	./caja.exe 0 &
-	./calecita.exe&
+	./calesita.exe&
+	./client.exe 999 0 &	
 	./client.exe 999 0 &	
 	./client.exe 999 0 & 	
 	./client.exe 999 0 & 	
@@ -165,17 +166,17 @@ caja: $(o_caja_files)
 	fi >&2
 	$(LD) $(LDFLAGS) $(o_caja_files) $(LOADLIBES) $(LDLIBS) -o caja.exe $(LDADD)
 
-calecita: $(o_calecita_files)
-	@if [ -z "$(o_calecita_files)" ]; \
+calesita: $(o_calesita_files)
+	@if [ -z "$(o_calesita_files)" ]; \
 	then \
-		echo "No hay archivos de entrada para la calecita (archivos calecita*.$(extension))."; \
+		echo "No hay archivos de entrada para la calesita (archivos calesita*.$(extension))."; \
 		false; \
 	fi >&2
-	$(LD) $(LDFLAGS) $(o_calecita_files) $(LOADLIBES) $(LDLIBS) -o calecita.exe $(LDADD)
+	$(LD) $(LDFLAGS) $(o_calesita_files) $(LOADLIBES) $(LDLIBS) -o calesita.exe $(LDADD)
 
 
 clean:
-	@$(RM) -fv *.o *~ caja/*.o common/fifos/*.o common/memCompartida/*.o common/signals/*.o common/logger/*.o common/exception/*.o calecita/*.o administrador/*.o cliente/*.o vendedor/*.o logs/* client.exe admin.exe vendedor.exe calecita.exe caja.exe
+	@$(RM) -fv *.o *~ caja/*.o common/fifos/*.o common/memCompartida/*.o common/signals/*.o common/logger/*.o common/exception/*.o calecita/*.o administrador/*.o cliente/*.o vendedor/*.o logs/* client.exe admin.exe vendedor.exe calesita.exe caja.exe
 
 
 

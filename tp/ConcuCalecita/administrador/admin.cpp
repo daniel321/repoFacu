@@ -9,9 +9,9 @@ const char archLog[] = "logs/logAdmin";
 Administrador::Administrador() : log(new Common::LogStreamBuf(archLog)) {}
 
 void Administrador::consultarCaja(){
-	FifoHandler::escribir(ARCHGENTEESPERANDOUSARLACAJA,QUIEROCONSULTARCAJA);
+	FifoHandler::escribir(ArchGenteEsperandoParaUsarCaja,QuieroConsultarCaja);
 	sleep(1);
-	int caja = FifoHandler::leer(ARCHCAJAADMIN);
+	int caja = FifoHandler::leer(ArchCajaAdmin);
 	log << "El administrador consulto la caja, habían: " << caja << "$." << std::endl;
 }
 

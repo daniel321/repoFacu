@@ -1,37 +1,32 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 
-	#include<string>
+#include <string>
+#include <signal.h>
 
-	// TODO hacer configurable
-	//static double tiempoMaxDeEsperaSinClientes = 100000;
+// TODO hacer configurable
 
-	static int TIEMPODEVUELTA = 10;
-	static unsigned CLIENTESPORVUELTA = 5;
+static int Espera = 5;
+static int PrecioBoleto = 50;
 
-	static int ESPERA = 5;
-	static int PRECIOBOLETO = 50;
+const char* ArchBoleteriaCerrada = "common/Constants.h";
+char CodeBoleteriaCerrada = 'z';
 
-	const char* ARCHBOLETERIACERRADA = "common/Constants.h";
-	char CODEBOLETERIACERRADA = 'z';
+static int SigClienteVendedor = SIGUSR1;
+const char* ARCHCOMUNICACIONCLIENTEVENDEDOR = "/tmp/atendiendo";
+const char* ARCHCOMUNICACIONCLIENTEVENDEDOR2 = "/tmp/atendiendo2";
 
-	static int SIGNALCLIENTEVENDEDOR = 10;
-	const char* ARCHCOMUNICACIONCLIENTEVENDEDOR = "/tmp/atendiendo";
-	const char* ARCHCOMUNICACIONCLIENTEVENDEDOR2 = "/tmp/atendiendo2";
+const char* ArchColaBoletos = "/tmp/colaBoletos";
+const char* ArchColaCalesita = "/tmp/colsaCalesita";
 
-	const char* ARCHCOLACOMPRARBOLETOS = "/tmp/comprarBoletos";
-	const char* ARCHCOLACSUBIRSEALACALECITA = "/tmp/subirseCalecita";
+const char* ArchaCajaVendedor = "/tmp/cajavendedor";
+const char* ArchCajaAdmin = "/tmp/cajaadmin";
+const char* ArchGenteEsperandoParaUsarCaja = "/tmp/esperandocaja";
 
-	const char* ARCHCAJAVENDEDOR = "/tmp/cajavendedor";
-	const char* ARCHCAJAADMIN = "/tmp/cajaadmin";
-	const char* ARCHGENTEESPERANDOUSARLACAJA = "/tmp/esperandocaja";
+static int QuieroConsultarCaja = -1;
 
-	static int QUIEROCONSULTARCAJA = -1;
-
-	static int SIGNALCLIENTECALECITA = 11;
-	static int SIGNALTERMINOCALECITA = 12; 
-
-	const char* ARCHIVOLOGVENDEDOR = "logs/logVendedor";
+static int SigClienteCalesita = SIGUSR2;
+static int SigTerminoCalesita = SIGUSR1;
 
 #endif
 

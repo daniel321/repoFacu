@@ -8,7 +8,7 @@
 
 const char archLog[] = "logs/logVendedor";
 
-Vendedor::Vendedor() : colaParaComprarBoleto(ARCHCOLACOMPRARBOLETOS), abierto(true),
+Vendedor::Vendedor() : colaParaComprarBoleto(ArchColaBoletos), abierto(true),
 		log(new Common::LogStreamBuf(archLog))
 {
 	colaParaComprarBoleto.abrir();
@@ -18,9 +18,8 @@ Vendedor::~Vendedor(){
 	log << "Cerrando las persianas." << std::endl;
 }
 
-void Vendedor::atenderClientes(){
-	// TODO borrar (para dar tiempo a los clientes de acumularse en la fila)
-	sleep(5);
+void Vendedor::atenderClientes()
+{
 
 	do{
 		int pid = FifoHandler::leer(colaParaComprarBoleto);
@@ -32,14 +31,14 @@ void Vendedor::atenderClientes(){
 
 void Vendedor::atenderCliente(int pid){
 	log << "Atendiendo al cliente " << pid << "." << std::endl;
-	kill(pid,SIGNALCLIENTEVENDEDOR);
+	kill(pid,SigClienteVendedor);
 
 	int presupuesto = FifoHandler::leer(ARCHCOMUNICACIONCLIENTEVENDEDOR);
 
-	if (presupuesto >= PRECIOBOLETO){
+	if (presupuesto >= PrecioBoleto){
 		int caja = incrementarCaja();
 		log << "El cliente " << pid << " ha comprado un boleto. Dinero en la caja: " << caja << "." << std::endl;
-		FifoHandler::escribir(ARCHCOMUNICACIONCLIENTEVENDEDOR2,presupuesto-PRECIOBOLETO);
+		FifoHandler::escribir(ARCHCOMUNICACIONCLIENTEVENDEDOR2,presupuesto-PrecioBoleto);
 	}else{
 		log << "El cliente " << pid << " no poseia suficiente dinero para pagar el boleto" << std::endl;
 		FifoHandler::escribir(ARCHCOMUNICACIONCLIENTEVENDEDOR2,presupuesto);
@@ -47,8 +46,8 @@ void Vendedor::atenderCliente(int pid){
 }
 
 int Vendedor::incrementarCaja(){
-	FifoHandler::escribir(ARCHGENTEESPERANDOUSARLACAJA,PRECIOBOLETO);
-	return FifoHandler::leer(ARCHCAJAVENDEDOR);
+	FifoHandler::escribir(ArchGenteEsperandoParaUsarCaja,PrecioBoleto);
+	return FifoHandler::leer(ArchaCajaVendedor);
 //	caja+= PRECIOBOLETO;
 }
 

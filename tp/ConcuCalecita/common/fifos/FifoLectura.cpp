@@ -1,6 +1,8 @@
 #include "FifoLectura.h"
 
 #include "../exception/ErrnoWrap.h"
+#include "../exception/InterruptException.h"
+#include <errno.h>
 
 FifoLectura::FifoLectura(const std::string nombre) : Fifo(nombre) {}
 
@@ -13,6 +15,10 @@ void FifoLectura::abrir() {
 
 ssize_t FifoLectura::leer(void* buffer,const ssize_t buffsize) const {
 	int ret = ::read ( fd,buffer,buffsize );
-	if (ret == -1) throw Common::ErrnoWrap("Error al leer de fifo.");
+	if (ret == -1)
+	{
+		if (errno == EINTR) throw Common::InterruptException();
+		throw Common::ErrnoWrap("Error al leer de fifo.");
+	}
 	return ret;
 }

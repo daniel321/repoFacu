@@ -22,7 +22,7 @@ int FifoHandler::leer(FifoLectura fifo){
 	int valor = 0,tam = 0;
 	do{
 		tam = fifo.leer(&valor,sizeof(int));
-	} while(valor == 0 && tam == sizeof(int));
+	} while(tam != sizeof(int));
 
 	return valor;
 }

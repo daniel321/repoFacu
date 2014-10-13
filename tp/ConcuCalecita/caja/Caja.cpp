@@ -3,14 +3,14 @@
 #include "../common/Constants.h" 			// archivoColaComprarBoletos
 #include "../common/fifos/FifoHandler.h"
 
-Caja::Caja(int cajaInicial):caja(cajaInicial),colaParaConsultarCaja(ARCHGENTEESPERANDOUSARLACAJA),abierto(true){
+Caja::Caja(int cajaInicial):caja(cajaInicial),colaParaConsultarCaja(ArchGenteEsperandoParaUsarCaja),abierto(true){
 	colaParaConsultarCaja.abrir();
 }
 
 void Caja::esperarModificaciones(){
 	do{
 		int consulta = FifoHandler::leer(colaParaConsultarCaja);
-		if(consulta == QUIEROCONSULTARCAJA){
+		if(consulta == QuieroConsultarCaja){
 			responderAAdmin();
 		}else{
 			responderAVendedor();
@@ -19,12 +19,12 @@ void Caja::esperarModificaciones(){
 }
 
 void Caja :: responderAVendedor(){
-	caja += PRECIOBOLETO;
-	FifoHandler::escribir(ARCHCAJAVENDEDOR,caja);
+	caja += PrecioBoleto;
+	FifoHandler::escribir(ArchaCajaVendedor,caja);
 }
 
 void Caja :: responderAAdmin(){
-	FifoHandler::escribir(ARCHCAJAADMIN,caja);
+	FifoHandler::escribir(ArchCajaAdmin,caja);
 }
 
 // TODO a ser llamada al recibir una señal para cerrar

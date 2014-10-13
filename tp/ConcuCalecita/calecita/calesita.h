@@ -36,8 +36,6 @@ class Calesita {
 		// da una vuelta e indica a todos los clientes de la calesita que la vuelta transcurrio
 		void darVuelta();
 
-		// TODO a ser llamado por un timeout
-		void arrancarVueltaPrematuramente();
 };
 
 #endif
