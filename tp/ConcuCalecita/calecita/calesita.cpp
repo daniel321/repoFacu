@@ -12,9 +12,8 @@
 
 const char archLog[] = "logs/logCalesita";
 
-static int TiempoDeVuelta = 5;
-static const int TimeoutCalesita = 10;
-static int ClientesPorVuelta = 5;
+int Calesita::TiempoDeVuelta = 5;
+int Calesita::NumeroAsiendos = 5;
 
 Calesita::Calesita() : colaParaEntrar(ArchColaCalesita), abierto(true), log(new Common::LogStreamBuf(archLog))
 {
@@ -60,11 +59,10 @@ void Calesita::esperarClientes()
 		catch (Common::InterruptException &e)
 		{
 			log << "Timeout de la calesita. Hay " << pids.size() << " niños arriba." << std::endl;
-			timeOut = true;
+			if (pids.size() > 0) timeOut = true;
 		}
 		alarm(0);
-	} while( ((pids.size() < ClientesPorVuelta) && !(pid == 0 && timeOut && pids.size() > 0))
-			&& abierto);
+	} while( (pids.size() < NumeroAsiendos) && !timeOut && abierto);
 }
 
 void Calesita::darVuelta(){

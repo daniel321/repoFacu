@@ -10,6 +10,10 @@ using namespace std;
 class Calesita {
 
 	public:
+		static int TiempoDeVuelta;
+		static int NumeroAsiendos;
+		static const int TimeoutCalesita = 10;
+
 		Calesita();
 		~Calesita();
 

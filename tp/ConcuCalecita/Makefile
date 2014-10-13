@@ -99,6 +99,7 @@ fuentes_common += $(wildcard common/memeCompartida/*.$(extension))
 fuentes_common += $(wildcard common/signals/*.$(extension))
 fuentes_common += $(wildcard common/logger/*.$(extension))
 fuentes_common += $(wildcard common/exception/*.$(extension))
+fuentes_common += $(wildcard common/semaforos/*.$(extension))
 
 # REGLAS
 #########
@@ -176,7 +177,7 @@ calesita: $(o_calesita_files)
 
 
 clean:
-	@$(RM) -fv *.o *~ caja/*.o common/fifos/*.o common/memCompartida/*.o common/signals/*.o common/logger/*.o common/exception/*.o calecita/*.o administrador/*.o cliente/*.o vendedor/*.o logs/* client.exe admin.exe vendedor.exe calesita.exe caja.exe
+	@$(RM) -fv *.o *~ caja/*.o common/fifos/*.o common/memCompartida/*.o common/signals/*.o common/logger/*.o common/exception/*.o common/semaforos/*.o calecita/*.o administrador/*.o cliente/*.o vendedor/*.o logs/* client.exe admin.exe vendedor.exe calesita.exe caja.exe
 
 
 

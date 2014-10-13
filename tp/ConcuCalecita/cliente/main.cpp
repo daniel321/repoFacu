@@ -7,6 +7,8 @@
  * 1 - Dinero
  * 2 - Si ya tiene boleto
  */
+#include "../common/semaforos/Semaforo.h"
+#include <iostream>
 int main (int argc, char** argv)
 {
 	try
