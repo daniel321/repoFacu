@@ -15,7 +15,6 @@ void FifoHandler::escribir(FifoEscritura fifo,int dato){
 int FifoHandler::leer(const char* path){
 	FifoLectura fifo(path);
 	fifo.abrir();
-
 	return leer(fifo);
 }
 

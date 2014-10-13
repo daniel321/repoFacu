@@ -14,17 +14,6 @@ void FifoEscritura::abrir() {
 
 void FifoEscritura::escribir(const void* buffer,const ssize_t buffsize) const
 {
-	//TODO: Evaluar si este lockeo es realmente necesario en los casos que el write escriba "cortado"
-	int lockResult = ::flock(fd, LOCK_EX);
-	if (lockResult == -1) throw Common::ErrnoWrap("Error al escribir en fifo.");
-	ssize_t retorno = 0;
-	ssize_t faltaEscribir = buffsize;
-	while (faltaEscribir > 0)
-	{
-		retorno = ::write(fd, (char*)(buffer + buffsize - faltaEscribir), buffsize);
-		if (retorno == -1) throw Common::ErrnoWrap("Error al escribir en fifo.");
-		faltaEscribir -= retorno;
-	}
-	lockResult = ::flock(fd, LOCK_UN);
-	if (lockResult == -1) throw Common::ErrnoWrap("Error al escribir en fifo.");
+	int retorno = ::write(fd, buffer, buffsize);
+	if (retorno == -1) throw Common::ErrnoWrap("Error al escribir en fifo.");
 }

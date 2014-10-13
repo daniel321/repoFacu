@@ -2,6 +2,7 @@
 
 #include "../exception/ErrnoWrap.h"
 #include <errno.h>
+#include <iostream>
 
 Fifo::Fifo(const std::string nombre) : nombre(nombre), fd(-1)
 {
@@ -9,10 +10,7 @@ Fifo::Fifo(const std::string nombre) : nombre(nombre), fd(-1)
 	if (ret == -1 && errno != EEXIST) throw Common::ErrnoWrap("Error al crear fifo.");
 }
 
-Fifo::~Fifo()
-{
-	cerrar();
-}
+Fifo::~Fifo() {}
 
 void Fifo::cerrar() {
 	if (fd != -1)
