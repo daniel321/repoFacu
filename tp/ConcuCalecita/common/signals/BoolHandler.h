@@ -14,6 +14,7 @@ class BoolHandler : public EventHandler {
 	private:
 		sig_atomic_t bandera;
 	public:
+		int sigNum;
 		BoolHandler (int signum);
 		~BoolHandler ();
 		virtual void handleSignal ( int signum );

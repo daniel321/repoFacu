@@ -17,6 +17,9 @@ class SignalHandler {
 		static void dispatcher ( int signum );
 
 	public:
+		static void esperarSenial(int signum);
+		static void bloquearSenial(int signum);
+		static void desbloquearSenial(int signum);
 		static SignalHandler* getInstance ();
 		static void destruir ();
 		EventHandler* registrarHandler ( int signum,EventHandler* eh );

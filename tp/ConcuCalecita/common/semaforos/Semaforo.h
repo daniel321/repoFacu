@@ -9,10 +9,13 @@ private:
 	int id;
 	int cantidad;
 public:
-	Semaforo ( const std::string& nombre, const char projId, const int cantidad, const int valorInicial );
+	Semaforo ( const std::string& nombre, const char projId, const int cantidad);
 	void inicializar (const int val) const;
-	void wait (const int num) const; // decrementa
-	void signal (const int num) const; // incrementa
+	void wait (const int num) const;
+	void signal (const int num) const;
+	 /**
+	  * Elimina el set de semaforos a nivel OS
+	  */
 	void eliminar () const;
 };
 

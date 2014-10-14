@@ -12,7 +12,7 @@ union semun {
     struct seminfo  *__buf;  /* Buffer for IPC_INFO (Linux-specific) */
 };
 
-Semaforo :: Semaforo (const std::string& nombre, const char projId, const int cantidad, const int valorInicial)
+Semaforo :: Semaforo (const std::string& nombre, const char projId, const int cantidad)
 	: cantidad(cantidad)
 {
 	key_t clave = ftok ( nombre.c_str(), projId);
@@ -37,7 +37,7 @@ void Semaforo :: wait (const int num) const {
 
 	operacion.sem_num = num;	// numero de semaforo
 	operacion.sem_op  = -1;	// restar 1 al semaforo
-	//operacion.sem_flg = SEM_UNDO;
+	operacion.sem_flg = SEM_UNDO;
 
 	int resultado = semop ( this->id,&operacion, 1 );
 	if (resultado == -1) throw Common::ErrnoWrap();
@@ -49,12 +49,13 @@ void Semaforo :: signal (const int num) const {
 
 	operacion.sem_num = num;	// numero de semaforo
 	operacion.sem_op  = 1;	// sumar 1 al semaforo
-	//operacion.sem_flg = SEM_UNDO;
+	operacion.sem_flg = SEM_UNDO;
 
 	int resultado = semop ( this->id,&operacion, 1 );
 	if (resultado == -1) throw Common::ErrnoWrap();
 }
 
 void Semaforo :: eliminar () const {
-	semctl ( this->id,0,IPC_RMID );
+	int resultado = semctl ( this->id, 0 ,IPC_RMID ); // El semnum se ignora, 0 por poner algo
+	if (resultado == -1) throw Common::ErrnoWrap();
 }

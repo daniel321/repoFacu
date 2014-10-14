@@ -36,7 +36,7 @@ class Cliente {
 		Common::Logger log;
 
 		// el cliente se agrega a si mismo a una cola y espera ser atendido
-		void esperarEnLaCola(const char* pathCola,BoolHandler& handler);
+		void esperarEnLaCola(const char* pathCola, int signum);
 };
 
 #endif

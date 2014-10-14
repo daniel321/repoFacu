@@ -54,3 +54,31 @@ int SignalHandler :: removerHandler ( int signum ) {
 	SignalHandler :: signal_handlers [ signum ] = NULL;
 	return 0;
 }
+
+void SignalHandler :: bloquearSenial ( int signum )
+{
+	sigset_t set;
+	sigemptyset (&set);
+	sigaddset(&set, signum);
+	int retorno =  sigprocmask(SIG_BLOCK, &set, 0);
+	if (retorno == - 1) throw Common::ErrnoWrap();
+}
+
+void SignalHandler :: desbloquearSenial ( int signum )
+{
+	sigset_t set;
+	sigemptyset (&set);
+	sigaddset(&set, signum);
+	int retorno =  sigprocmask(SIG_UNBLOCK, &set, 0);
+	if (retorno == - 1) throw Common::ErrnoWrap();
+}
+
+void SignalHandler :: esperarSenial ( int signum )
+{
+	sigset_t set;
+	sigemptyset (&set);
+	sigaddset(&set, signum);
+	int sig;
+	int retorno = sigwait(&set, &sig);
+	if (retorno > 0 || sig != signum) throw Common::ErrnoWrap();
+}

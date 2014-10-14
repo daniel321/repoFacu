@@ -1,6 +1,6 @@
 #include "BoolHandler.h"
 
-BoolHandler::BoolHandler (int signum) : bandera(0) {}
+BoolHandler::BoolHandler (int signum) : bandera(0),sigNum(signum) {}
 
 BoolHandler::~BoolHandler () {}
 

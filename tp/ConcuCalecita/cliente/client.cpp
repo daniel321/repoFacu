@@ -14,7 +14,12 @@ const char archLog[]  = "logs/logClientes";
 
 Cliente::Cliente(int presup,bool boleto)
 	:	tengoBoleto(boleto), meCerraronLaCalesita(false), cash(presup),
-	 	id(getpid()), log(new Common::LogStreamBufSinc(archLog)) {}
+	 	id(getpid()), log(new Common::LogStreamBufSinc(archLog))
+{
+	SignalHandler::bloquearSenial(SigClienteCalesita);
+	SignalHandler::bloquearSenial(SigClienteVendedor);
+	SignalHandler::bloquearSenial(SigTerminoCalesita);
+}
 
 Cliente::~Cliente()
 {
@@ -22,32 +27,32 @@ Cliente::~Cliente()
 }
 
 // el cliente se agrega a si mismo a una cola y espera ser atendido
-void Cliente::esperarEnLaCola(const char* pathCola,BoolHandler& handler){
+void Cliente::esperarEnLaCola(const char* pathCola, int signum)
+{
 	FifoHandler::escribir(pathCola,id);
-
-	while((handler.getBandera() != 1) && !meCerraronLaCalesita)
-		sleep(Espera);
+	SignalHandler::esperarSenial(signum);
 }
 
 // espera la indicacion del usuario para arrancar a atender
 void Cliente::comprarBoleto(){
-	if(!tengoBoleto && !meCerraronLaCalesita){
+	if(!tengoBoleto && !meCerraronLaCalesita)
+	{
 		log << "Cliente " << id << " haciendo la cola para comprar boleto." << std::endl;
 
-		BoolHandler handler(SigClienteVendedor);
-		SignalHandler::getInstance()->registrarHandler(SigClienteVendedor,&handler);
+		esperarEnLaCola(ArchColaBoletos,SigClienteVendedor);
 
-		esperarEnLaCola(ArchColaBoletos,handler);
-
-		if(meCerraronLaCalesita){
+		if(meCerraronLaCalesita)
+		{
 			log << "Cliente " << id << " no pudo comprar el boleto por que cerro la boleteria." << std::endl;
-		}else{
-			if(handler.getBandera()){
-				log << "Cliente " << id << " recibio la señal del vendedor." << std::endl;
-				comunicacionConElVendedor();
-			}
 		}
-	}else{
+		else
+		{
+			log << "Cliente " << id << " recibio la señal del vendedor." << std::endl;
+			comunicacionConElVendedor();
+		}
+	}
+	else
+	{
 		log << "Cliente " << id << " no hace la cola por tener ya un boleto." << std::endl;
 	}
 }
@@ -80,12 +85,10 @@ void Cliente::subirseALaCalesita(){
 		if(tengoBoleto){
 			log << "cliente " << id << " haciendo la cola para subisre a la calesita." << std::endl;
 
-			BoolHandler handler(SigClienteCalesita);
-			SignalHandler::getInstance()->registrarHandler(SigClienteCalesita,&handler);
+			esperarEnLaCola(ArchColaCalesita,SigClienteCalesita);
 
-			esperarEnLaCola(ArchColaCalesita,handler);
-
-			if(handler.getBandera() && !meCerraronLaCalesita){
+			if(!meCerraronLaCalesita)
+			{
 				log << "Cliente " << id << " entro en la calesita." << std::endl;
 				subidaALaCalesita();
 				log << "Cliente " << id << " salio de la calesita." << std::endl;
@@ -97,12 +100,7 @@ void Cliente::subirseALaCalesita(){
 // ocurre cuando se sube a la calecita (x interrupción)
 void Cliente::subidaALaCalesita(){
 	tengoBoleto = false;
-
-	BoolHandler handler(SigTerminoCalesita);
-	SignalHandler::getInstance()->registrarHandler(SigTerminoCalesita,&handler);
-
-	while(handler.getBandera() != 1)
-		sleep(Espera);
+	SignalHandler::esperarSenial(SigTerminoCalesita);
 }
 
 // TODO a ser llamada al recibir una señal indicando que cerro la calecita
