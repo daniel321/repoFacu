@@ -13,9 +13,9 @@
 const char archLog[] = "logs/logCalesita";
 
 int Calesita::TiempoDeVuelta = 5;
-int Calesita::NumeroAsiendos = 5;
 
-Calesita::Calesita() : colaParaEntrar(ArchColaCalesita), abierto(true), log(new Common::LogStreamBuf(archLog))
+Calesita::Calesita(int numeroAsientos) : colaParaEntrar(ArchColaCalesita), abierto(true),
+		log(new Common::LogStreamBuf(archLog)), asientos(numeroAsientos), numeroAsientos(numeroAsientos)
 {
 	SignalHandler::getInstance()->registrarHandler(SIGALRM, new VoidHandler());
 	int interrupt = siginterrupt(SIGALRM, 1);
@@ -26,6 +26,7 @@ Calesita::Calesita() : colaParaEntrar(ArchColaCalesita), abierto(true), log(new 
 
 Calesita::~Calesita(){
 	log << "Calesita cerrando." << endl;
+	asientos.liberar();
 }
 
 void Calesita::operar(){
@@ -62,7 +63,7 @@ void Calesita::esperarClientes()
 			if (pids.size() > 0) timeOut = true;
 		}
 		alarm(0);
-	} while( (pids.size() < NumeroAsiendos) && !timeOut && abierto);
+	} while( (pids.size() < numeroAsientos) && !timeOut && abierto);
 }
 
 void Calesita::darVuelta(){
@@ -71,6 +72,7 @@ void Calesita::darVuelta(){
 	for (list<int>::const_iterator iterator = pids.begin(); iterator != pids.end(); ++iterator)
 		kill(*iterator,SigTerminoCalesita);
 	pids.clear();
+	asientos.reset();
 }
 
 // TODO a ser llamada al recibir una señal para cerrar

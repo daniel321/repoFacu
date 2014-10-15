@@ -9,6 +9,7 @@ static const int tamBytesAsiento = sizeof(bool);
 Asientos::Asientos(int totalAsientos) : totalAsientos(pathFtokContadorLugares, 'a'),
 		asientos(pathFtokAsientos, 'a', totalAsientos*tamBytesAsiento), semaforos()
 {
+	this->totalAsientos.escribir(totalAsientos);
 	cargarSemaforos();
 	inicializarSemaforos();
 }
@@ -49,9 +50,22 @@ void Asientos::reset()
 	asientos.reset();
 }
 
-void Asientos::sentarse(int pid, Common::Logger* log)
+int Asientos::getOcupados()
+{
+	int contador = 0;
+	for (int i = 0; i < totalAsientos.leer(); ++i)
+	{
+		bool estaOcupado = false;
+		asientos.leer(i*sizeof(bool), &estaOcupado, sizeof(bool));
+		if (estaOcupado) ++contador;
+	}
+	return contador;
+}
+
+void Asientos::sentarse(int pid, std::ostream *log)
 {
 	srand(pid);
+	int t = totalAsientos.leer();
 	int posibleAsiento = rand() % totalAsientos.leer();
 	bool sePudoSentar = false;
 	while (!sePudoSentar)

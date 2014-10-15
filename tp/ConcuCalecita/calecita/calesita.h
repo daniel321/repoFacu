@@ -3,6 +3,7 @@
 
 #include "../common/fifos/FifoLectura.h"
 #include "../common/logger/Logger.h"
+#include "../common/Asientos.h"
 #include <list>
 
 using namespace std;
@@ -11,10 +12,9 @@ class Calesita {
 
 	public:
 		static int TiempoDeVuelta;
-		static int NumeroAsiendos;
 		static const int TimeoutCalesita = 10;
 
-		Calesita();
+		Calesita(int NumeroAsientos);
 		~Calesita();
 
 		/**
@@ -32,7 +32,9 @@ class Calesita {
 		FifoLectura colaParaEntrar;
 		list<int> pids;
 		bool abierto;
+		Asientos asientos;
 		Common::Logger log;
+		int numeroAsientos;
 
 		// espera a que aparezca cierta cantidad de clientes para poder arrancar la calesita
 		void esperarClientes();

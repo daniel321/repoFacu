@@ -9,6 +9,7 @@
 #include "../common/Constants.h"
 #include "../common/fifos/FifoHandler.h"
 #include "../common/logger/LogStreamBufSinc.h"
+#include "../common/Asientos.h"
 
 const char archLog[]  = "logs/logClientes";
 
@@ -100,6 +101,7 @@ void Cliente::subirseALaCalesita(){
 // ocurre cuando se sube a la calecita (x interrupción)
 void Cliente::subidaALaCalesita(){
 	tengoBoleto = false;
+	Asientos().sentarse(id, &log);
 	SignalHandler::esperarSenial(SigTerminoCalesita);
 }
 

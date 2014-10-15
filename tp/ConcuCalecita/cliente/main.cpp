@@ -8,10 +8,6 @@
  * 2 - Si ya tiene boleto
  */
 
-#include "../common/memCompartida/MemCompartida.h"
-#include "../common/memCompartida/MemCmpRaw.h"
-#include "../common/semaforos/Semaforo.h"
-#include <iostream>
 int main (int argc, char** argv)
 {
 	try

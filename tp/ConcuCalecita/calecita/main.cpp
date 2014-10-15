@@ -8,11 +8,12 @@
  */
 int main (int argc, char** argv)
 {
-	if(argc > 1) Calesita::NumeroAsiendos = atoi(argv[1]);
+	int numeroAsientos = 5;
+	if(argc > 1) numeroAsientos = atoi(argv[1]);
 	if(argc > 2) Calesita::TiempoDeVuelta = atoi(argv[2]);
 	try
 	{
-		Calesita calesita;
+		Calesita calesita(numeroAsientos);
 		calesita.operar();
 		return 0;
 	}
