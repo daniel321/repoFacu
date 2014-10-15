@@ -7,7 +7,7 @@
 class Vendedor {
 
 	public:
-		Vendedor();	
+		Vendedor(int precioBoleto);
 		~Vendedor();	
 
 		// atiende a los clientes en orden de llegada 
@@ -20,6 +20,7 @@ class Vendedor {
 	private:
 		FifoLectura colaParaComprarBoleto;
 		bool abierto;
+		int precioBoleto;
 		Common::Logger log;
 
 		// incrementa la caja en "precio"

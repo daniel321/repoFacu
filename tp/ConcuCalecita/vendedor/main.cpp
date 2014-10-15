@@ -1,10 +1,14 @@
-#include "vendedor.h" 	// Vendedor
+#include "vendedor.h"
+#include <stdlib.h>	// atoi
 
 int main (int argc, char** argv)
 {
 	try
 	{
-		Vendedor vendedor;
+		int precioBoleto = 40;
+		if(argc > 1) precioBoleto = atoi(argv[1]);
+
+		Vendedor vendedor(precioBoleto);
 		vendedor.atenderClientes();
 		return 0;
 	}

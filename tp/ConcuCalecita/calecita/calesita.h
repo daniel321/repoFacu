@@ -11,10 +11,9 @@ using namespace std;
 class Calesita {
 
 	public:
-		static int TiempoDeVuelta;
 		static const int TimeoutCalesita = 10;
 
-		Calesita(int NumeroAsientos);
+		Calesita(int NumeroAsientos, int tiempoVuelta);
 		~Calesita();
 
 		/**
@@ -35,6 +34,7 @@ class Calesita {
 		Asientos asientos;
 		Common::Logger log;
 		int numeroAsientos;
+		int tiempoVuelta;
 
 		// espera a que aparezca cierta cantidad de clientes para poder arrancar la calesita
 		void esperarClientes();

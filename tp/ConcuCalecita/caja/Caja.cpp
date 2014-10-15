@@ -13,13 +13,13 @@ void Caja::esperarModificaciones(){
 		if(consulta == QuieroConsultarCaja){
 			responderAAdmin();
 		}else{
-			responderAVendedor();
+			responderAVendedor(consulta);
 		}
 	}while(abierto);
 }
 
-void Caja :: responderAVendedor(){
-	caja += PrecioBoleto;
+void Caja :: responderAVendedor(int ganancia){
+	caja += ganancia;
 	FifoHandler::escribir(ArchaCajaVendedor,caja);
 }
 

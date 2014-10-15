@@ -2,6 +2,9 @@
 #include <stdlib.h>	// atoi
 #include <iostream>
 
+/**
+ * Argumento: Dinero inicial de la caja
+ */
 int main (int argc, char** argv)
 {
 	try

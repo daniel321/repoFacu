@@ -88,6 +88,7 @@ LD =  @echo "  LD  $@"; $(old)
 endif
 
 # Si no especifica archivos, tomo todos.
+fuentes_control = $(wildcard control/*.$(extension))
 fuentes_client = $(wildcard cliente/*.$(extension))
 fuentes_admin = $(wildcard administrador/*.$(extension))
 fuentes_vendedor = $(wildcard vendedor/*.$(extension))
@@ -106,7 +107,7 @@ fuentes_common += $(wildcard common/semaforos/*.$(extension))
 
 .PHONY: all clean
 
-all: client admin vendedor caja calesita
+all: client admin vendedor caja calesita control
 
 o_common_files = $(patsubst %.$(extension),%.o,$(fuentes_common))
 o_client_files = $(o_common_files) $(patsubst %.$(extension),%.o,$(fuentes_client)) 
@@ -114,11 +115,13 @@ o_admin_files = $(o_common_files) $(patsubst %.$(extension),%.o,$(fuentes_admin)
 o_vendedor_files = $(o_common_files) $(patsubst %.$(extension),%.o,$(fuentes_vendedor))
 o_caja_files = $(o_common_files) $(patsubst %.$(extension),%.o,$(fuentes_caja)) 
 o_calesita_files =  $(o_common_files) $(patsubst %.$(extension),%.o,$(fuentes_calesita))
+o_control_files = $(o_common_files) $(patsubst %.$(extension),%.o,$(fuentes_control))
 
 test: 
 	./vendedor.exe&
 	./caja.exe 0 &
 	./calesita.exe&
+	./admin.exe &
 	./client.exe 999 0 &	
 	./client.exe 999 0 &	
 	./client.exe 999 0 & 	
@@ -162,7 +165,7 @@ vendedor: $(o_vendedor_files)
 caja: $(o_caja_files)
 	@if [ -z "$(o_caja_files)" ]; \
 	then \
-		echo "No hay archivos de entrada para el vendedor de boletos (archivos vendedor*.$(extension))."; \
+		echo "No hay archivos de entrada para el vendedor de boletos (archivos caja*.$(extension))."; \
 		false; \
 	fi >&2
 	$(LD) $(LDFLAGS) $(o_caja_files) $(LOADLIBES) $(LDLIBS) -o caja.exe $(LDADD)
@@ -174,10 +177,18 @@ calesita: $(o_calesita_files)
 		false; \
 	fi >&2
 	$(LD) $(LDFLAGS) $(o_calesita_files) $(LOADLIBES) $(LDLIBS) -o calesita.exe $(LDADD)
+	
+control: $(o_control_files)
+	@if [ -z "$(o_control_files)" ]; \
+	then \
+		echo "No hay archivos de entrada para control (archivos control*.$(extension))."; \
+		false; \
+	fi >&2
+	$(LD) $(LDFLAGS) $(o_control_files) $(LOADLIBES) $(LDLIBS) -o control.exe $(LDADD)
 
 
 clean:
-	@$(RM) -fv *.o *~ caja/*.o common/*.o common/fifos/*.o common/memCompartida/*.o common/signals/*.o common/logger/*.o common/exception/*.o common/semaforos/*.o calecita/*.o administrador/*.o cliente/*.o vendedor/*.o logs/* client.exe admin.exe vendedor.exe calesita.exe caja.exe
+	@$(RM) -fv *.o *~ caja/*.o common/*.o common/fifos/*.o common/memCompartida/*.o common/signals/*.o common/logger/*.o common/exception/*.o common/semaforos/*.o calecita/*.o administrador/*.o cliente/*.o vendedor/*.o  control/*.o logs/* client.exe admin.exe vendedor.exe calesita.exe caja.exe control.exe
 
 
 

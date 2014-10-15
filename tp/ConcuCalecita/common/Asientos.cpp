@@ -70,7 +70,7 @@ void Asientos::sentarse(int pid, std::ostream *log)
 	bool sePudoSentar = false;
 	while (!sePudoSentar)
 	{
-		if (log != 0) *log << "Cliente: " << pid << " intentando sentarse en el asiento " << posibleAsiento << std::endl;
+		if (log != 0) *log << "Cliente " << pid << " intentando sentarse en el asiento " << posibleAsiento << std::endl;
 		int bache = posibleAsiento / semaforosPorBache;
 		semaforos[bache].wait(posibleAsiento % semaforosPorBache);
 		bool estaOcupado;
@@ -82,7 +82,7 @@ void Asientos::sentarse(int pid, std::ostream *log)
 			sePudoSentar = true;
 		}
 		semaforos[bache].signal(posibleAsiento % semaforosPorBache);
-		if (log != 0 && sePudoSentar) *log << "Cliente: " << pid << " se sento en el asiento " << posibleAsiento << std::endl;
+		if (log != 0 && sePudoSentar) *log << "Cliente " << pid << " se sento en el asiento " << posibleAsiento << std::endl;
 		posibleAsiento = (posibleAsiento+1) % totalAsientos.leer();
 	}
 }

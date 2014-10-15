@@ -27,7 +27,7 @@ void MemCmpRaw::crear ( const char* archivo,const char letra, const size_t tam )
 
 }
 
-MemCmpRaw::MemCmpRaw ( const MemCmpRaw& origen ) : shmId(origen.shmId) {
+MemCmpRaw::MemCmpRaw ( const MemCmpRaw& origen ) : shmId(origen.shmId),tam(origen.tam) {
 	this->ptrDatos = shmat ( origen.shmId,NULL,0 );
 	if ( this->ptrDatos == (void*) -1 ) throw Common::ErrnoWrap();
 }

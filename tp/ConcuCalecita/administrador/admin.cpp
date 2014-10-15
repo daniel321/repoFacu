@@ -14,10 +14,3 @@ void Administrador::consultarCaja(){
 	int caja = FifoHandler::leer(ArchCajaAdmin);
 	log << "El administrador consulto la caja, habían: " << caja << "$." << std::endl;
 }
-
-void Administrador::cerrarCalesita()
-{
-	log << "El administrador dio la orden de cerrar la calecita." << std::endl;
-}
-
-

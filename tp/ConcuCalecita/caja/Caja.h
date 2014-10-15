@@ -22,7 +22,7 @@ class Caja {
 
 		// incrementa la caja en un boleto vendido
 		// y notifica de la nueva caja al vendedor
-		void responderAVendedor();
+		void responderAVendedor(int ganancia);
 
 		// notifica el valor de la caja al administrador
 		void responderAAdmin();

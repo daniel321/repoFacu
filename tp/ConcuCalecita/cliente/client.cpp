@@ -71,8 +71,7 @@ void Cliente::comunicacionConElVendedor(){
 		log << "Cliente " << id << " compró exitosamente el boleto, sobraron " << sobrante << " pesos." << std::endl;
 		tengoBoleto = true;
 	}else{
-		log << "cliente " << id << " no pudo comprar el boleto por falta de dinero, faltaban "
-				<< PrecioBoleto-cash << " pesos." << std::endl;
+		log << "cliente " << id << " no pudo comprar el boleto por falta de dinero, tenía:" << cash << std::endl;
 	}
 
 	cash = sobrante;

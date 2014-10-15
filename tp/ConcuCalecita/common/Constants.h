@@ -6,9 +6,6 @@
 
 // TODO hacer configurable
 
-static int Espera = 5;
-static int PrecioBoleto = 50;
-
 const char* ArchBoleteriaCerrada = "common/Constants.h";
 char CodeBoleteriaCerrada = 'z';
 
@@ -17,7 +14,7 @@ const char* ARCHCOMUNICACIONCLIENTEVENDEDOR = "/tmp/atendiendo";
 const char* ARCHCOMUNICACIONCLIENTEVENDEDOR2 = "/tmp/atendiendo2";
 
 const char* ArchColaBoletos = "/tmp/colaBoletos";
-const char* ArchColaCalesita = "/tmp/colsaCalesita";
+const char* ArchColaCalesita = "/tmp/colaCalesita";
 
 const char* ArchaCajaVendedor = "/tmp/cajavendedor";
 const char* ArchCajaAdmin = "/tmp/cajaadmin";

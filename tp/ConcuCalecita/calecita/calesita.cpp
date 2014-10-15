@@ -12,10 +12,9 @@
 
 const char archLog[] = "logs/logCalesita";
 
-int Calesita::TiempoDeVuelta = 5;
-
-Calesita::Calesita(int numeroAsientos) : colaParaEntrar(ArchColaCalesita), abierto(true),
-		log(new Common::LogStreamBuf(archLog)), asientos(numeroAsientos), numeroAsientos(numeroAsientos)
+Calesita::Calesita(int numeroAsientos, int tiempoVuelta) : colaParaEntrar(ArchColaCalesita), abierto(true),
+		log(new Common::LogStreamBuf(archLog)), asientos(numeroAsientos),
+		numeroAsientos(numeroAsientos), tiempoVuelta(tiempoVuelta)
 {
 	SignalHandler::getInstance()->registrarHandler(SIGALRM, new VoidHandler());
 	int interrupt = siginterrupt(SIGALRM, 1);
@@ -67,7 +66,7 @@ void Calesita::esperarClientes()
 }
 
 void Calesita::darVuelta(){
-	sleep(TiempoDeVuelta);
+	sleep(tiempoVuelta);
 
 	for (list<int>::const_iterator iterator = pids.begin(); iterator != pids.end(); ++iterator)
 		kill(*iterator,SigTerminoCalesita);
