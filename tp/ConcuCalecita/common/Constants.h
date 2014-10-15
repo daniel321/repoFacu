@@ -10,6 +10,11 @@ const char* ArchBoleteriaCerrada = "common/Constants.h";
 char CodeBoleteriaCerrada = 'z';
 
 static int SigClienteVendedor = SIGUSR1;
+static int SigClienteCalesita = SIGUSR1;
+static int SigTerminoCalesita = SIGUSR1;
+
+static int SigQuit = SIGUSR2;
+
 const char* ARCHCOMUNICACIONCLIENTEVENDEDOR = "/tmp/atendiendo";
 const char* ARCHCOMUNICACIONCLIENTEVENDEDOR2 = "/tmp/atendiendo2";
 
@@ -21,9 +26,6 @@ const char* ArchCajaAdmin = "/tmp/cajaadmin";
 const char* ArchGenteEsperandoParaUsarCaja = "/tmp/esperandocaja";
 
 static int QuieroConsultarCaja = -1;
-
-static int SigClienteCalesita = SIGUSR2;
-static int SigTerminoCalesita = SIGUSR1;
 
 #endif
 

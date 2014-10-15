@@ -6,7 +6,6 @@
 #include "../common/fifos/FifoHandler.h"
 #include "../common/logger/LogStreamBuf.h"
 #include "../common/signals/SignalHandler.h"
-#include "../common/signals/VoidHandler.h"
 #include "../common/exception/ErrnoWrap.h"
 #include "../common/exception/InterruptException.h"
 
@@ -16,26 +15,42 @@ Calesita::Calesita(int numeroAsientos, int tiempoVuelta) : colaParaEntrar(ArchCo
 		log(new Common::LogStreamBuf(archLog)), asientos(numeroAsientos),
 		numeroAsientos(numeroAsientos), tiempoVuelta(tiempoVuelta)
 {
-	SignalHandler::getInstance()->registrarHandler(SIGALRM, new VoidHandler());
+	SignalHandler::getInstance()->registrarHandler(SIGALRM, &alarmHandler);
 	int interrupt = siginterrupt(SIGALRM, 1);
 	if (interrupt == -1) throw Common::ErrnoWrap();
+	SignalHandler::getInstance()->registrarHandler(SigQuit, &quitHandler);
+	interrupt = siginterrupt(SigQuit, 1);
+	if (interrupt == -1) throw Common::ErrnoWrap();
 	log << "Abriendo la calesita." << endl;
-	colaParaEntrar.abrir();
+	try
+	{
+		colaParaEntrar.abrir();
+	}
+	catch (Common::InterruptException &e)
+	{
+
+	}
 }
 
 Calesita::~Calesita(){
 	log << "Calesita cerrando." << endl;
 	asientos.liberar();
+	SignalHandler::getInstance()->destruir();
+	colaParaEntrar.cerrar();
+	colaParaEntrar.eliminar();
 }
 
 void Calesita::operar(){
 	do{
 		log << "Calesita esperando que llegue mas gente." << endl;
-		if (abierto) esperarClientes();
-		log << "Calesita dando una vuelta con " << pids.size() << " pasajeros." << endl;
-		darVuelta();
-		log << "Calesita termino de dar la vuelta." << endl;
-	} while(abierto || pids.size() > 0);
+		if (!quitHandler.getBandera()) esperarClientes();
+		if (pids.size() > 0)
+		{
+			log << "Calesita dando una vuelta con " << pids.size() << " pasajeros." << endl;
+			darVuelta();
+			log << "Calesita termino de dar la vuelta." << endl;
+		}
+	} while(!quitHandler.getBandera() || pids.size() > 0);
 
 }
 
@@ -62,7 +77,7 @@ void Calesita::esperarClientes()
 			if (pids.size() > 0) timeOut = true;
 		}
 		alarm(0);
-	} while( (pids.size() < numeroAsientos) && !timeOut && abierto);
+	} while( (pids.size() < numeroAsientos) && !timeOut && !quitHandler.getBandera());
 }
 
 void Calesita::darVuelta(){
@@ -73,11 +88,3 @@ void Calesita::darVuelta(){
 	pids.clear();
 	asientos.reset();
 }
-
-// TODO a ser llamada al recibir una señal para cerrar
-// por parte del administrador de la calesita
-void Calesita::cerrar(){
-	abierto = false;
-	// TODO notificar gente en la cola
-}
-

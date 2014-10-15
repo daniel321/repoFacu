@@ -10,6 +10,7 @@
 #include <sys/wait.h>
 
 #include "../common/exception/ErrnoWrap.h"
+#include "../common/Constants.h"
 
 Control::Control() {}
 
@@ -23,7 +24,7 @@ void Control::correr()
 		std::cout << "b. Lanzar clientes." << std::endl;
 		std::cout << "c. Esperar finalización de clientes." << std::endl;
 		std::cout << "d. Cerrar procesos base." << std::endl;
-		std::cout << "e. Salir." << std::endl;
+		std::cout << "e. Salir." << std::endl << std::endl;
 		char opcion;
 		std::cin >> opcion;
 		switch (opcion)
@@ -141,7 +142,7 @@ void Control::cerrarProcesos()
 	while (!pidsProcesos.empty())
 	{
 		int pid = pidsProcesos.back();
-		kill(pid, SIGTERM);
+		kill(pid, SigQuit);
 		waitpid(pid, &status, 0);
 		pidsProcesos.pop_back();
 	}

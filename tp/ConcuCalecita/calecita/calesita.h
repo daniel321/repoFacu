@@ -4,6 +4,8 @@
 #include "../common/fifos/FifoLectura.h"
 #include "../common/logger/Logger.h"
 #include "../common/Asientos.h"
+#include "../common/signals/BoolHandler.h"
+#include "../common/signals/VoidHandler.h"
 #include <list>
 
 using namespace std;
@@ -12,21 +14,12 @@ class Calesita {
 
 	public:
 		static const int TimeoutCalesita = 10;
-
 		Calesita(int NumeroAsientos, int tiempoVuelta);
 		~Calesita();
-
 		/**
 		 * Espera a que haya cierta cantidad de clientes y realiza una vuelta
 		 */
 		void operar();
-
-		/**
-		 * TODO a ser llamada al recibir una señal para cerrar
-		 * por parte del administrador de la calesita
-		 */
-		void cerrar();
-
 	private:
 		FifoLectura colaParaEntrar;
 		list<int> pids;
@@ -35,6 +28,8 @@ class Calesita {
 		Common::Logger log;
 		int numeroAsientos;
 		int tiempoVuelta;
+		VoidHandler alarmHandler;
+		BoolHandler quitHandler;
 
 		// espera a que aparezca cierta cantidad de clientes para poder arrancar la calesita
 		void esperarClientes();

@@ -10,7 +10,11 @@ FifoLectura::~FifoLectura() {}
 
 void FifoLectura::abrir() {
 	fd = ::open( nombre.c_str(),O_RDONLY );
-	if (fd == -1) throw Common::ErrnoWrap("Error al abrir fifo.");
+	if (fd == -1)
+	{
+		if (errno == EINTR) throw Common::InterruptException();
+		throw Common::ErrnoWrap("Error al abrir fifo.");
+	}
 }
 
 ssize_t FifoLectura::leer(void* buffer,const ssize_t buffsize) const {
