@@ -1,3 +1,4 @@
+
 #include "Control.h"
 
 #include <iostream>
@@ -119,7 +120,8 @@ void Control::lanzarClientes()
 	srand(time(NULL));
 	for (int i = 0; i < cuantos; ++i)
 	{
-		int monto = pMin + rand()%varianza;
+		int monto = pMin;
+		if (varianza != 0) monto += rand()%varianza;
 		result = fork();
 		if (result == -1) throw Common::ErrnoWrap("e1");
 		if (result == 0)
