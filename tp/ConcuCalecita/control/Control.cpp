@@ -9,6 +9,7 @@
 #include <ctime>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <unistd.h>
 
 #include "../common/exception/ErrnoWrap.h"
 #include "../common/SigCerrable.h"
@@ -73,7 +74,7 @@ void Control::lanzarProcesos()
 	if (result == -1) throw Common::ErrnoWrap();
 	if (result == 0)
 	{
-		result = execl("admin.exe", "admin.exe");
+		result = ::execl("admin.exe", "admin.exe", (char*)0);
 		if (result == -1) throw Common::ErrnoWrap();
 	}
 	pidsProcesos.push_back(result);
@@ -81,7 +82,7 @@ void Control::lanzarProcesos()
 	if (result == -1) throw Common::ErrnoWrap();
 	if (result == 0)
 	{
-		result = execl("caja.exe", "caja.exe");
+		result = ::execl("caja.exe", "caja.exe",(char*)0);
 		if (result == -1) throw Common::ErrnoWrap();
 	}
 	pidsProcesos.push_back(result);
@@ -89,7 +90,7 @@ void Control::lanzarProcesos()
 	if (result == -1) throw Common::ErrnoWrap();
 	if (result == 0)
 	{
-		result = execl("vendedor.exe", "vendedor.exe", intToStr(precioBoleto).c_str());
+		result = ::execl("vendedor.exe", "vendedor.exe", intToStr(precioBoleto).c_str(),(char*)0);
 		if (result == -1) throw Common::ErrnoWrap();
 	}
 	pidsProcesos.push_back(result);
@@ -97,7 +98,7 @@ void Control::lanzarProcesos()
 	if (result == -1) throw Common::ErrnoWrap();
 	if (result == 0)
 	{
-		result = execl("calesita.exe", "calesita.exe", intToStr(asientosCalesita).c_str(), intToStr(tiempoCalesita).c_str());
+		result = ::execl("calesita.exe", "calesita.exe", intToStr(asientosCalesita).c_str(), intToStr(tiempoCalesita).c_str(),(char*)0);
 		if (result == -1) throw Common::ErrnoWrap();
 	}
 	pidsProcesos.push_back(result);

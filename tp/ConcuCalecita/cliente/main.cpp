@@ -1,5 +1,6 @@
 #include "client.h" 	// Cliente
 #include <stdlib.h>	// atoi
+#include <unistd.h>	
 
 #include "../common/exception/ErrnoWrap.h"
 /**
