@@ -10,7 +10,7 @@ class FifoHandler
 public:
 	static void escribir(const char* path,int dato);
 	static void escribir(FifoEscritura fifo,int dato);
-	static int leer(const char* path);
+	static int leer(const char* path, bool eliminarTrasLeer = false);
 	static int leer(FifoLectura fifo);
 
 };

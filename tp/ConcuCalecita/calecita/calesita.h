@@ -7,15 +7,16 @@
 #include "../common/Asientos.h"
 #include "../common/signals/BoolHandler.h"
 #include "../common/signals/VoidHandler.h"
+#include "../common/SigCerrable.h"
 #include <list>
 
 using namespace std;
 
-class Calesita {
-
+class Calesita : public SigCerrable
+{
 	public:
 		static const int TimeoutCalesita = 10;
-		Calesita(int NumeroAsientos, int tiempoVuelta);
+		Calesita(int numAsientos, int tiempoVuelta);
 		~Calesita();
 		/**
 		 * Espera a que haya cierta cantidad de clientes y realiza una vuelta
@@ -30,7 +31,6 @@ class Calesita {
 		int numeroAsientos;
 		int tiempoVuelta;
 		VoidHandler alarmHandler;
-		BoolHandler quitHandler;
 
 		// espera a que aparezca cierta cantidad de clientes para poder arrancar la calesita
 		void esperarClientes();

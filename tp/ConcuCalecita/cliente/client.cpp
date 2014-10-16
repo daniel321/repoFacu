@@ -65,7 +65,7 @@ void Cliente::comprarBoleto(){
 void Cliente::comunicacionConElVendedor(){
 
 	FifoHandler::escribir(ARCHCOMUNICACIONCLIENTEVENDEDOR,cash);
-	int sobrante = FifoHandler::leer(ARCHCOMUNICACIONCLIENTEVENDEDOR2);
+	int sobrante = FifoHandler::leer(ARCHCOMUNICACIONCLIENTEVENDEDOR2, true);
 
 	if (sobrante != cash){
 		log << "Cliente " << id << " compró exitosamente el boleto, sobraron " << sobrante << " pesos." << std::endl;

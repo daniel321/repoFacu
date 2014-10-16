@@ -11,15 +11,12 @@
 
 const char archLog[] = "logs/logCalesita";
 
-Calesita::Calesita(int numeroAsientos, int tiempoVuelta) : colaParaEntrar(ArchColaCalesita), antiEof(ArchColaCalesita),
-		log(new Common::LogStreamBuf(archLog)), asientos(numeroAsientos),
-		numeroAsientos(numeroAsientos), tiempoVuelta(tiempoVuelta)
+Calesita::Calesita(int numAsientos, int tiempoVuelta) : colaParaEntrar(ArchColaCalesita), antiEof(ArchColaCalesita),
+		log(new Common::LogStreamBuf(archLog)), asientos(numAsientos),
+		numeroAsientos(numAsientos), tiempoVuelta(tiempoVuelta)
 {
 	SignalHandler::getInstance()->registrarHandler(SIGALRM, &alarmHandler);
 	int interrupt = siginterrupt(SIGALRM, 1);
-	if (interrupt == -1) throw Common::ErrnoWrap();
-	SignalHandler::getInstance()->registrarHandler(SigQuit, &quitHandler);
-	interrupt = siginterrupt(SigQuit, 1);
 	if (interrupt == -1) throw Common::ErrnoWrap();
 	log << "Abriendo la calesita." << endl;
 	try
@@ -29,7 +26,6 @@ Calesita::Calesita(int numeroAsientos, int tiempoVuelta) : colaParaEntrar(ArchCo
 	}
 	catch (Common::InterruptException &e)
 	{
-
 	}
 }
 
@@ -45,14 +41,14 @@ Calesita::~Calesita(){
 void Calesita::operar(){
 	do{
 		log << "Calesita esperando que llegue mas gente." << endl;
-		if (!quitHandler.getBandera()) esperarClientes();
+		if (!hayQueSalir()) esperarClientes();
 		if (pids.size() > 0)
 		{
 			log << "Calesita dando una vuelta con " << pids.size() << " pasajeros." << endl;
 			darVuelta();
 			log << "Calesita termino de dar la vuelta." << endl;
 		}
-	} while(!quitHandler.getBandera() || pids.size() > 0);
+	} while(!hayQueSalir() || pids.size() > 0);
 
 }
 
@@ -79,7 +75,7 @@ void Calesita::esperarClientes()
 			if (pids.size() > 0) timeOut = true;
 		}
 		alarm(0);
-	} while( (pids.size() < numeroAsientos) && !timeOut && !quitHandler.getBandera());
+	} while( (pids.size() < numeroAsientos) && !timeOut && !hayQueSalir());
 }
 
 void Calesita::darVuelta(){

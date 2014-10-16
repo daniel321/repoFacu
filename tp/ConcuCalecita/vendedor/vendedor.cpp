@@ -4,37 +4,53 @@
 #include <signal.h>					// kill
 #include "../common/fifos/FifoHandler.h"
 #include "../common/logger/LogStreamBuf.h"
+#include "../common/signals/SignalHandler.h"
 #include "../common/Constants.h"
+#include "../common/exception/InterruptException.h"
 
 const char archLog[] = "logs/logVendedor";
 
 Vendedor::Vendedor(int precioBoleto) : colaParaComprarBoleto(ArchColaBoletos), antiEof(ArchColaBoletos),
-		abierto(true),	precioBoleto(precioBoleto),log(new Common::LogStreamBuf(archLog))
+		precioBoleto(precioBoleto),log(new Common::LogStreamBuf(archLog))
 {
-	colaParaComprarBoleto.abrir();
-	antiEof.abrir();
+	try
+	{
+		colaParaComprarBoleto.abrir();
+		antiEof.abrir();
+	}
+	catch (Common::InterruptException &e)
+	{
+	}
 }
 
 Vendedor::~Vendedor(){
-	log << "Cerrando las persianas." << std::endl;
+	log << "Cerrando." << std::endl;
+	colaParaComprarBoleto.cerrar();
+	antiEof.cerrar();
+	colaParaComprarBoleto.eliminar();
 }
 
 void Vendedor::atenderClientes()
 {
+	while(!hayQueSalir())
+	{
+		try
+		{
+			int pid = FifoHandler::leer(colaParaComprarBoleto);
+			if(!hayQueSalir() && (pid != 0)) atenderCliente(pid);
+		}
+		catch (Common::InterruptException &e)
+		{
 
-	do{
-		int pid = FifoHandler::leer(colaParaComprarBoleto);
-
-		if(abierto && (pid != 0))
-			atenderCliente(pid);	// TODO parece haber un problema cuando se vacia
-	}while(abierto);			// intenta atender 2 veces al último cliente...
+		}
+	};
 }
 
 void Vendedor::atenderCliente(int pid){
 	log << "Atendiendo al cliente " << pid << "." << std::endl;
 	kill(pid,SigClienteVendedor);
 
-	int presupuesto = FifoHandler::leer(ARCHCOMUNICACIONCLIENTEVENDEDOR);
+	int presupuesto = FifoHandler::leer(ARCHCOMUNICACIONCLIENTEVENDEDOR, true);
 
 	if (presupuesto >= precioBoleto){
 		int caja = incrementarCaja();
@@ -50,9 +66,4 @@ int Vendedor::incrementarCaja(){
 	FifoHandler::escribir(ArchGenteEsperandoParaUsarCaja,precioBoleto);
 	return FifoHandler::leer(ArchaCajaVendedor);
 //	caja+= PRECIOBOLETO;
-}
-
-void Vendedor::cerrar(){
-	abierto = false;
-	// TODO notificar gente en la cola
 }

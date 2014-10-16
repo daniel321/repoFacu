@@ -1,16 +1,22 @@
 #include "FifoEscritura.h"
 
 #include "../exception/ErrnoWrap.h"
+#include "../exception/InterruptException.h"
 #include "../exception/ExEOF.h"
 #include <sys/file.h>
+#include <errno.h>
 
 FifoEscritura::FifoEscritura(const std::string nombre) : Fifo(nombre) {}
 
 FifoEscritura::~FifoEscritura() {}
 
 void FifoEscritura::abrir() {
-	fd = ::open ( nombre.c_str(),O_WRONLY );
-	if (fd == -1) throw Common::ErrnoWrap("Error al abrir fifo para escritura.");
+	if (fd == -1) fd = ::open ( nombre.c_str(),O_WRONLY );
+	if (fd == -1)
+	{
+		if (errno == EINTR) throw Common::InterruptException();
+		throw Common::ErrnoWrap("Error al abrir fifo de escritura.");
+	}
 }
 
 void FifoEscritura::escribir(const void* buffer,const ssize_t buffsize) const

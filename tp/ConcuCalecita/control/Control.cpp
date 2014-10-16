@@ -10,7 +10,7 @@
 #include <sys/wait.h>
 
 #include "../common/exception/ErrnoWrap.h"
-#include "../common/Constants.h"
+#include "../common/SigCerrable.h"
 
 Control::Control() {}
 
@@ -58,12 +58,21 @@ void Control::lanzarProcesos()
 		std::cout << "Ya fueron lanzados" << std::endl;
 		return;
 	}
+
+	int tiempoCalesita, asientosCalesita, precioBoleto;
+	std::cout << "Ingrese el tiempo de vuelta de la calesita:" << std::endl;
+	std::cin >> tiempoCalesita;
+	std::cout << "Ingrese el numero de asientos de la calesita:" << std::endl;
+	std::cin >> asientosCalesita;
+	std::cout << "Ingrese el precio del boleto:" << std::endl;
+	std::cin >> precioBoleto;
+
 	int result;
 	result = fork();
 	if (result == -1) throw Common::ErrnoWrap();
 	if (result == 0)
 	{
-		result = execl("admin.exe", 0);
+		result = execl("admin.exe", "admin.exe");
 		if (result == -1) throw Common::ErrnoWrap();
 	}
 	pidsProcesos.push_back(result);
@@ -71,7 +80,7 @@ void Control::lanzarProcesos()
 	if (result == -1) throw Common::ErrnoWrap();
 	if (result == 0)
 	{
-		result = execl("caja.exe", 0);
+		result = execl("caja.exe", "caja.exe");
 		if (result == -1) throw Common::ErrnoWrap();
 	}
 	pidsProcesos.push_back(result);
@@ -79,7 +88,7 @@ void Control::lanzarProcesos()
 	if (result == -1) throw Common::ErrnoWrap();
 	if (result == 0)
 	{
-		result = execl("vendedor.exe", 0);
+		result = execl("vendedor.exe", "vendedor.exe", intToStr(precioBoleto).c_str());
 		if (result == -1) throw Common::ErrnoWrap();
 	}
 	pidsProcesos.push_back(result);
@@ -87,7 +96,7 @@ void Control::lanzarProcesos()
 	if (result == -1) throw Common::ErrnoWrap();
 	if (result == 0)
 	{
-		result = execl("calesita.exe", 0);
+		result = execl("calesita.exe", "calesita.exe", intToStr(asientosCalesita).c_str(), intToStr(tiempoCalesita).c_str());
 		if (result == -1) throw Common::ErrnoWrap();
 	}
 	pidsProcesos.push_back(result);

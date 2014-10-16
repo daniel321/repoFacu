@@ -4,24 +4,21 @@
 #include "../common/fifos/FifoLectura.h"
 #include "../common/fifos/FifoEscritura.h"
 #include "../common/logger/Logger.h"
+#include "../common/SigCerrable.h"
 
-class Vendedor {
+class Vendedor : public SigCerrable
+{
 
 	public:
 		Vendedor(int precioBoleto);
 		~Vendedor();	
-
-		// atiende a los clientes en orden de llegada 
+		/**
+		 * atiende a los clientes en orden de llegada
+		 */
 		void atenderClientes();
-
-		// TODO a ser llamada al recibir una señal para cerrar
-		// por parte del administrador de la calecita
-		void cerrar();
-
 	private:
 		FifoLectura colaParaComprarBoleto;
 		FifoEscritura antiEof; // Para mantener el extremo del fifo abierto
-		bool abierto;
 		int precioBoleto;
 		Common::Logger log;
 

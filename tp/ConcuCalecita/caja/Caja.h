@@ -2,23 +2,22 @@
 #define VENDEDOR_H
 
 #include "../common/fifos/FifoLectura.h"
+#include "../common/fifos/FifoEscritura.h"
+#include "../common/SigCerrable.h"
 
-class Caja {
+class Caja : public SigCerrable{
 
 	public:
 		Caja(int cajaInicial);	
+		~Caja();
 
 		// atiende a los que necesitan cosultar o modificar la caja
 		void esperarModificaciones();
-
-		// TODO a ser llamada al recibir una señal para cerrar
-		// por parte del administrador de la calecita
-		void cerrar();
-
 	private:
 		int caja;
 		FifoLectura colaParaConsultarCaja;
-		bool abierto;
+		FifoEscritura fifoRespustaVendedor;
+		FifoEscritura fifoRespuestaAdministrador;
 
 		// incrementa la caja en un boleto vendido
 		// y notifica de la nueva caja al vendedor
