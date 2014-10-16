@@ -8,10 +8,11 @@
 
 const char archLog[] = "logs/logVendedor";
 
-Vendedor::Vendedor(int precioBoleto) : colaParaComprarBoleto(ArchColaBoletos), abierto(true),
-		precioBoleto(precioBoleto),log(new Common::LogStreamBuf(archLog))
+Vendedor::Vendedor(int precioBoleto) : colaParaComprarBoleto(ArchColaBoletos), antiEof(ArchColaBoletos),
+		abierto(true),	precioBoleto(precioBoleto),log(new Common::LogStreamBuf(archLog))
 {
 	colaParaComprarBoleto.abrir();
+	antiEof.abrir();
 }
 
 Vendedor::~Vendedor(){

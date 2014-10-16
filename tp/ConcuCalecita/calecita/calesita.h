@@ -2,6 +2,7 @@
 #define CALESITA_H
 
 #include "../common/fifos/FifoLectura.h"
+#include "../common/fifos/FifoEscritura.h"
 #include "../common/logger/Logger.h"
 #include "../common/Asientos.h"
 #include "../common/signals/BoolHandler.h"
@@ -22,8 +23,8 @@ class Calesita {
 		void operar();
 	private:
 		FifoLectura colaParaEntrar;
+		FifoEscritura antiEof; // Para mantener el extremo del fifo abierto
 		list<int> pids;
-		bool abierto;
 		Asientos asientos;
 		Common::Logger log;
 		int numeroAsientos;

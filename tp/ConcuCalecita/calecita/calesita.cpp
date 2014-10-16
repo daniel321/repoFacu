@@ -11,7 +11,7 @@
 
 const char archLog[] = "logs/logCalesita";
 
-Calesita::Calesita(int numeroAsientos, int tiempoVuelta) : colaParaEntrar(ArchColaCalesita), abierto(true),
+Calesita::Calesita(int numeroAsientos, int tiempoVuelta) : colaParaEntrar(ArchColaCalesita), antiEof(ArchColaCalesita),
 		log(new Common::LogStreamBuf(archLog)), asientos(numeroAsientos),
 		numeroAsientos(numeroAsientos), tiempoVuelta(tiempoVuelta)
 {
@@ -25,6 +25,7 @@ Calesita::Calesita(int numeroAsientos, int tiempoVuelta) : colaParaEntrar(ArchCo
 	try
 	{
 		colaParaEntrar.abrir();
+		antiEof.abrir();
 	}
 	catch (Common::InterruptException &e)
 	{
@@ -37,6 +38,7 @@ Calesita::~Calesita(){
 	asientos.liberar();
 	SignalHandler::getInstance()->destruir();
 	colaParaEntrar.cerrar();
+	antiEof.cerrar();
 	colaParaEntrar.eliminar();
 }
 

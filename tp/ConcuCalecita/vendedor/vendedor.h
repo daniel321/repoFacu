@@ -2,6 +2,7 @@
 #define VENDEDOR_H
 
 #include "../common/fifos/FifoLectura.h"
+#include "../common/fifos/FifoEscritura.h"
 #include "../common/logger/Logger.h"
 
 class Vendedor {
@@ -19,6 +20,7 @@ class Vendedor {
 
 	private:
 		FifoLectura colaParaComprarBoleto;
+		FifoEscritura antiEof; // Para mantener el extremo del fifo abierto
 		bool abierto;
 		int precioBoleto;
 		Common::Logger log;

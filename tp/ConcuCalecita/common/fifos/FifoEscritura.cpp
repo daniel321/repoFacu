@@ -1,6 +1,7 @@
 #include "FifoEscritura.h"
 
 #include "../exception/ErrnoWrap.h"
+#include "../exception/ExEOF.h"
 #include <sys/file.h>
 
 FifoEscritura::FifoEscritura(const std::string nombre) : Fifo(nombre) {}
@@ -16,4 +17,5 @@ void FifoEscritura::escribir(const void* buffer,const ssize_t buffsize) const
 {
 	int retorno = ::write(fd, buffer, buffsize);
 	if (retorno == -1) throw Common::ErrnoWrap("Error al escribir en fifo.");
+	if (retorno == 0) throw Common::ExEOF();
 }
