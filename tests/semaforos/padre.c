@@ -10,8 +10,8 @@ void signal(int id);
 void wait(int id);
 
 int main(){
-	int id1 = inicializar(1,"padre.c");		// creo el semaforo 
-	int id2 = inicializar(1,"Makefile");		// creo el semaforo 
+	int id1 = inicializar(0,"padre.c");		// creo el semaforo 
+	int id2 = inicializar(0,"Makefile");		// creo el semaforo 
 	
 	int pid = fork();
 	if(pid == 0){
@@ -37,10 +37,9 @@ int main(){
 int inicializar(int valor,const char* path){
 	int key = ftok(path,1);			// genero clave
 	int id = semget(key,1,IPC_CREAT|0666);	// genero semaforo
-	
-	int semaforo = 0;			// inicializo valor 
+						// inicializo valor 
 						// (no es necesario usar la union, con un int alcanza)
-	semctl(id,0,SETVAL,semaforo);		// inicializo el semaforo
+	semctl(id,0,SETVAL,valor);		// inicializo el semaforo
 	return id;
 }
 
