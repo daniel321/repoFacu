@@ -22,7 +22,7 @@ class Cliente {
 		respInicial cantidadDeMatches;
 
 		Cola<request> colaRequests;
-		ColaResp<respInicial,response> colaResponses;
+		ColaResp<response> colaResponses;
 
 		void armarRequest(char nombre[tamNombre], char direccion[tamDir],char telefono[tamTel],bool leo);
 

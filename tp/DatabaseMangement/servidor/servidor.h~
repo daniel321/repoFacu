@@ -30,7 +30,6 @@ class Servidor{
 		void escribirEnLaBaseDeDatos();
 		
 		void armarCantDeMatches(int matches,long mtype);
-		void armarRespuestaDummy(long mtype);
 		void armarRespuesta(char nombre[tamNombre], char direccion[tamDir], char telefono[tamTel],long mtype);
 
 		void enviarRespuestas(int cantMatches,int pid);

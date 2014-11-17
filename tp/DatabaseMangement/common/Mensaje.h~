@@ -13,7 +13,7 @@ typedef struct request{
 
 typedef struct respInicial{
 	long mtype;
-	int matches;
+	int cantidadDeMatches;
 }respInicial;
 
 typedef struct response{

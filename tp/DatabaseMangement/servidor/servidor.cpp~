@@ -73,7 +73,7 @@ void Servidor::armarRespuestaDummy(long mtype){
 	strncpy(r.nombre, NOMBRE_DUMMY, tamNombre);
 	strncpy(r.direccion, DIR_DUMMY, tamDir);
 	strncpy(r.telefono, TEL_DUMMY, tamTel);
-	r.mtype = mtype;
+	resp.mtype = mtype;
 
 	resp.push_back(r);
 }
