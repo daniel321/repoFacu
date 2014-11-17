@@ -5,8 +5,12 @@
 #include "../common/Mensaje.h"		// structs
 #include "../common/Cola.h"		// cola
 
-class Servidor{
+#include "../common/Registro.h"
+#include "../common/SigCerrable.h"
+#include "BaseDeDatos.h"
 
+class Servidor : public SigCerrable
+{
 	public:
 		Servidor();
 		~Servidor();	
@@ -15,21 +19,15 @@ class Servidor{
 		void pararDeAtender();
 
 	private:
-		request req;
-		response resp;
 		Cola<request> colaRequests;
 		Cola<response> colaResponses;
-
-		bool atendiendo;
-
-		bool leerDeLaBaseDeDatos();
-		void escribirEnLaBaseDeDatos();
+		BaseDeDatos bd;
 		
 		void armarRespuestaDummy(long mtype);
 		void armarRespuesta(char nombre[tamNombre], char direccion[tamDir], char telefono[tamTel],long mtype);
 
-		void imprimirRequest();
-		void imprimirRspuesta();
+		void imprimirRequest(request &req);
+		void imprimirRspuesta(response &resp);
 };
 
 #endif

@@ -91,6 +91,8 @@ endif
 fuentes_client = $(wildcard cliente/*.$(extension))
 fuentes_server = $(wildcard servidor/*.$(extension))
 fuentes_common = $(wildcard common/*.$(extension))
+fuentes_common += $(wildcard common/exception/*.$(extension))
+fuentes_common += $(wildcard common/signals/*.$(extension))
 
 # REGLAS
 #########
@@ -128,7 +130,7 @@ server: $(o_server_files)
 	$(LD) $(LDFLAGS) $(o_server_files) $(LOADLIBES) $(LDLIBS) -o server.exe $(LDADD)
 
 clean:
-	@$(RM) -fv *.o *~ common/*.o cliente/*.o servidor/*.o client.exe server.exe
+	@$(RM) -fv *.o *~ common/*.o common/*/*.o cliente/*.o servidor/*.o client.exe server.exe
 
 
 

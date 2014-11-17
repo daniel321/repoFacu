@@ -1,66 +1,49 @@
 #include "servidor.h"
 
-#include <iostream>			// cout
+#include <iostream>			// std::cout
 #include <string.h>			// strncpy
 
-using namespace std;
+const std::string BDArch("bd.tp2");
 
-Servidor::Servidor():colaRequests(ARCHI_COLA_REQUESTS,LETRA_REQUESTS),colaResponses(ARCHI_COLA_RESPONSES,LETRA_RESPONSES),atendiendo(true){
+Servidor::Servidor() : colaRequests(ARCHI_COLA_REQUESTS,LETRA_REQUESTS)
+	,colaResponses(ARCHI_COLA_RESPONSES,LETRA_RESPONSES), bd(BDArch)
+{
 }
 
-Servidor::~Servidor(){
+Servidor::~Servidor()
+{
 	colaRequests.destruir();
 	colaResponses.destruir();
-	//TODO terminar server y clientes
 }
 
+void Servidor::atenderClientes()
+{
+	try
+	{
+		request req;
+		do{
+			int cantLeidos = colaRequests.leer(0,&req);
+			if(cantLeidos > 0){
+				imprimirRequest(req);
 
-void Servidor::atenderClientes(){
-	do{
-		int cantLeidos = colaRequests.leer(0,&req);
-		if(cantLeidos > 0){
-			imprimirRequest();
-
-			if(req.leo){
-				int pid = req.mtype;
-				bool pudoLeer = leerDeLaBaseDeDatos();
-		
-				if(!pudoLeer)
-					armarRespuestaDummy(pid);
-	
-				imprimirRspuesta();
-				const response responseToSend = resp;
-				colaResponses.escribir( responseToSend );
-			}else{
-				escribirEnLaBaseDeDatos();
+				if(req.leo)
+				{
+					std::vector<Registro> = bd.buscar(Registro(req.reg));
+					// TODO
+				}
+				else
+				{
+					bd.guardar(Registro(req.reg));
+				}
 			}
-		}
-	}while(atendiendo);
+		}while(!hayQueSalir());
+	}
+	catch (Common::InterruptException &e)
+	{
+	}
 }
 
-
-void Servidor::pararDeAtender(){
-	atendiendo = false;
-}
-
-bool Servidor::leerDeLaBaseDeDatos(){
-	//TODO leer de la base de datos y guardar campos en "resp"
-	return false;
-}
-
-void Servidor::escribirEnLaBaseDeDatos(){
-	//TODO escribir en la base de datos a partir de "req"
-	//TODO imprimir algo o indicar que se escribio bien
-}
-
-void Servidor::armarRespuestaDummy(long mtype){
-	strncpy(resp.nombre, NOMBRE_DUMMY, tamNombre);
-	strncpy(resp.direccion, DIR_DUMMY, tamDir);
-	strncpy(resp.telefono, TEL_DUMMY, tamTel);
-	resp.mtype = mtype;
-}
-
-
+/*
 void Servidor::armarRespuesta(char nombre[tamNombre], char direccion[tamDir], char telefono[tamTel],long mtype){
 	strncpy(resp.nombre, nombre, tamNombre);
 	strncpy(resp.direccion, direccion, tamDir);
@@ -68,24 +51,31 @@ void Servidor::armarRespuesta(char nombre[tamNombre], char direccion[tamDir], ch
 	resp.mtype = mtype;
 }
 
+void Servidor::armarRespuestaDummy(long mtype){
+	strncpy(resp.nombre, NOMBRE_DUMMY, tamNombre);
+	strncpy(resp.direccion, DIR_DUMMY, tamDir);
+	strncpy(resp.telefono, TEL_DUMMY, tamTel);
+	resp.mtype = mtype;
+}*/
 
-void Servidor::imprimirRequest(){
-	cout << endl;
-	cout << "Request recibida por el server: " << endl;
-	cout << "Nombre: " << req.nombre << endl;
-	cout << "Direccion: " << req.direccion << endl;
-	cout << "Telefono: " << req.telefono << endl;
-	cout << "Lectura: " << req.leo << endl;
-	cout << "Tipo: " << req.mtype << endl << endl;
+void Servidor::imprimirRequest(request &req){
+	std::cout << std::endl;
+	std::cout << "Request recibida por el server: " << std::endl;
+	std::cout << "Nombre: " << req.reg.nombre << std::endl;
+	std::cout << "Direccion: " << req.reg.direccion << std::endl;
+	std::cout << "Telefono: " << req.reg.telefono << std::endl;
+	std::cout << "Lectura: " << req.leo << std::endl;
+	std::cout << "Tipo: " << req.mtype << std::endl << std::endl;
 }
 
-void Servidor::imprimirRspuesta(){
-	cout << endl;
-	cout << "Respuesta enviada por el server: " << endl;
-	cout << "Nombre: " << resp.nombre << endl;
-	cout << "Direccion: " << resp.direccion << endl;
-	cout << "Telefono: " << resp.telefono << endl;
-	cout << "Tipo: " << resp.mtype << endl << endl;
+
+void Servidor::imprimirRspuesta(response &resp){
+	std::cout << std::endl;
+	std::cout << "Respuesta enviada por el server: " << std::endl;
+	std::cout << "Nombre: " << resp.reg.nombre << std::endl;
+	std::cout << "Direccion: " << resp.reg.direccion << std::endl;
+	std::cout << "Telefono: " << resp.reg.telefono << std::endl;
+	std::cout << "Tipo: " << resp.mtype << std::endl << std::endl;
 }
 
 

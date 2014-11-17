@@ -1,21 +1,17 @@
 #ifndef MENSAJE_H
 #define MENSAJE_H
 
-#include "Constants.h" 		// tam campos
+#include "Registro.h"
 
 typedef struct request{
 	long mtype;
-	char nombre[tamNombre];
-	char direccion[tamDir];
-	char telefono[tamTel];
+	struct registro reg;
 	bool leo;
 }request;
 
 typedef struct response{
 	long mtype;
-	char nombre[tamNombre];
-	char direccion[tamDir];
-	char telefono[tamTel];
+	struct registro reg;
 }response;
 
 #endif

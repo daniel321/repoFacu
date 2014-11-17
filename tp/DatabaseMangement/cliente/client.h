@@ -10,18 +10,14 @@ class Cliente {
 	public:
 		Cliente();
 		~Cliente();	
-
-		void consultarBaseDeDatos(char nombre[tamNombre], char direccion[tamDir], char telefono[tamTel]);
-		void escribirEnBaseDeDatos(char nombre[tamNombre], char direccion[tamDir], char telefono[tamTel]);
-
+		void consultarBaseDeDatos(const std::string &nombre, const std::string &direccion, const std::string &telefono);
+		void escribirEnBaseDeDatos(const std::string &nombre, const std::string &direccion, const std::string &telefono);
 	private:
 		response resp;
 		request req;
 		Cola<request> colaRequests;
 		Cola<response> colaResponses;
-
-		void armarRequest(char nombre[tamNombre], char direccion[tamDir],char telefono[tamTel],bool leo);
-
+		void armarRequest(const std::string &nombre, const std::string &direccion, const std::string &telefono, bool leo);
 		void imprimirRequest();
 		void imprimirRspuesta();
 };
