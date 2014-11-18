@@ -21,61 +21,50 @@ void Servidor::atenderClientes()
 	try
 	{
 		request req;
-		do{
-			int cantLeidos = colaRequests.leer(0,&req);
-			if(cantLeidos > 0){
-				imprimirRequest(req);
-
-				if(req.leo)
-				{
-					std::vector<Registro> = bd.buscar(Registro(req.reg));
-					// TODO
-				}
-				else
-				{
-					bd.guardar(Registro(req.reg));
-				}
+		do
+		{
+			colaRequests.leer(0,&req);
+			if(req.leo)
+			{
+				int pid = req.mtype;
+				std::vector<Registro> matches = bd.buscar(Registro(req.reg));
+				enviarRespuestas(matches,pid);
 			}
-		}while(!hayQueSalir());
+			else
+			{
+				bd.guardar(Registro(req.reg));
+			}
+		} while(!hayQueSalir());
 	}
 	catch (Common::InterruptException &e)
 	{
 	}
 }
 
-/*
-void Servidor::armarRespuesta(char nombre[tamNombre], char direccion[tamDir], char telefono[tamTel],long mtype){
-	strncpy(resp.nombre, nombre, tamNombre);
-	strncpy(resp.direccion, direccion, tamDir);
-	strncpy(resp.telefono, telefono, tamTel);
-	resp.mtype = mtype;
+void Servidor::enviarRespuestas(std::vector<Registro> &matches, int pid)
+{
+	colaResponses.escribir( armarCantDeMatches(matches.size(),pid) );
+	for(int i=0; i < matches.size() ; ++i)
+	{
+		colaResponses.escribir( armarResponse(matches[i], pid) );
+	}
 }
 
-void Servidor::armarRespuestaDummy(long mtype){
-	strncpy(resp.nombre, NOMBRE_DUMMY, tamNombre);
-	strncpy(resp.direccion, DIR_DUMMY, tamDir);
-	strncpy(resp.telefono, TEL_DUMMY, tamTel);
-	resp.mtype = mtype;
-}*/
-
-void Servidor::imprimirRequest(request &req){
-	std::cout << std::endl;
-	std::cout << "Request recibida por el server: " << std::endl;
-	std::cout << "Nombre: " << req.reg.nombre << std::endl;
-	std::cout << "Direccion: " << req.reg.direccion << std::endl;
-	std::cout << "Telefono: " << req.reg.telefono << std::endl;
-	std::cout << "Lectura: " << req.leo << std::endl;
-	std::cout << "Tipo: " << req.mtype << std::endl << std::endl;
+#include <cstring>
+response Servidor::armarResponse(Registro &reg,long pid)
+{
+	response resp;
+	resp.reg = reg.getRegistro();
+	resp.mtype = pid;
+	return resp;
 }
 
-
-void Servidor::imprimirRspuesta(response &resp){
-	std::cout << std::endl;
-	std::cout << "Respuesta enviada por el server: " << std::endl;
-	std::cout << "Nombre: " << resp.reg.nombre << std::endl;
-	std::cout << "Direccion: " << resp.reg.direccion << std::endl;
-	std::cout << "Telefono: " << resp.reg.telefono << std::endl;
-	std::cout << "Tipo: " << resp.mtype << std::endl << std::endl;
+respInicial Servidor::armarCantDeMatches(int cantMatches, long pid)
+{
+	respInicial resp;
+	resp.mtype = pid;
+	resp.matches = cantMatches;
+	return resp;
 }
 
 

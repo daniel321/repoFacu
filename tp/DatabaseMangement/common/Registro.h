@@ -30,7 +30,7 @@ class Registro
 		/**
 		 * Constructor por deserialización
 		 */
-		Registro(const char aDeserializar[tamNombre+tamDir+tamTel]);
+		Registro(const char aDeserializar[tamTotal]);
 		/**
 		 * Serializa y devuelve el struct registro de forma serializada
 		 * Notar que el char* devuelto debe ser eliminado con delete[]

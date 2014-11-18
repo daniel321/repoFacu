@@ -4,6 +4,8 @@
 #include "../common/Constants.h" 	// tam campos, paths de arch y letras
 #include "../common/Mensaje.h"		// structs
 #include "../common/Cola.h"		// cola
+#include "../common/ColaResponses.h"	// cola de respuestas
+#include <vector>			// vector de respuestas
 
 #include "../common/Registro.h"
 #include "../common/SigCerrable.h"
@@ -19,15 +21,25 @@ class Servidor : public SigCerrable
 		void pararDeAtender();
 
 	private:
-		Cola<request> colaRequests;
-		Cola<response> colaResponses;
 		BaseDeDatos bd;
-		
-		void armarRespuestaDummy(long mtype);
-		void armarRespuesta(char nombre[tamNombre], char direccion[tamDir], char telefono[tamTel],long mtype);
+		std::vector<response> resp;
 
-		void imprimirRequest(request &req);
-		void imprimirRspuesta(response &resp);
+		Cola<request> colaRequests;
+		ColaResp<respInicial,response> colaResponses;
+		
+		/**
+		 * Arma una respuesta inicial con la cantidad de matches y el pid al cual se mandara
+		 */
+		respInicial armarCantDeMatches(int cantMatches,long pid);
+		/**
+		 * Arma una respuesta en base a un registro a enviar
+		 */
+		response armarResponse(Registro &reg,long pid);
+		/**
+		 * Envia respuestas
+		 */
+		void enviarRespuestas(std::vector<Registro> &matches, int pid);
+
 };
 
 #endif

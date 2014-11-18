@@ -20,7 +20,7 @@ Registro::Registro(const std::string &nombre, const std::string &direccion, cons
 	strcpy(this->reg.telefono, telefono.c_str());
 }
 
-Registro::Registro(const char aDeserializar[tamNombre+tamDir+tamTel]) : reg()
+Registro::Registro(const char aDeserializar[tamTotal]) : reg()
 {
 	strncpy(this->reg.nombre, aDeserializar, tamNombre);
 	strncpy(this->reg.direccion, aDeserializar+tamNombre, tamDir);

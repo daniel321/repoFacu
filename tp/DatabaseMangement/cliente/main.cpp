@@ -1,31 +1,44 @@
-#include "client.h" 	// Cliente
-#include <stdlib.h>	// atoi
+#include "client.h"
+#include <iostream>
 
-static const int ERROR = 1;
-static const int OK = 0;
-
-/**
- * Arguemtnos esperados:
- * 1 - Nombre
- * 2 - Direccion
- * 3 - Teléfono
- * 4 - Si lee (1) o escribe (0)
- */
-
-int main (int argc, char** argv){
-	if (argc <= 4){
-		return ERROR;	
-	}
-
+int main (int argc, char** argv)
+{
 	Cliente cliente;
-
-	if(atoi(argv[4]) == 1){
-		cliente.consultarBaseDeDatos(argv[1],argv[2],argv[3]);
-	}else{
-		cliente.escribirEnBaseDeDatos(argv[1],argv[2],argv[3]);	
+	while (true)
+	{
+		std::cout << "1. Guardar registro." << std::endl;
+		std::cout << "2. Consultar." << std::endl;
+		std::cout << "3. Salir." << std::endl;
+		char opcion;
+		std::cin >> opcion;
+		switch(opcion)
+		{
+			case '1':
+			case '2':
+			{
+				std::string nombre;
+				std::string dir;
+				std::string tel;
+				std::cout << "Ingrese nombre (o *):" << std::endl;
+				std::cin.ignore();
+				std::getline(std::cin, nombre);
+				std::cout << "Ingrese direccion (o *):" << std::endl;
+				std::getline(std::cin, dir);
+				std::cout << "Ingrese telefono (o *):" << std::endl;
+				std::getline(std::cin, tel);
+				std::cout << "ingreso:" << nombre << dir << tel << std::endl;
+				if (opcion == '1')
+						cliente.escribirEnBaseDeDatos(nombre, dir, tel);
+				if (opcion == '2')
+						cliente.consultarBaseDeDatos(nombre, dir, tel);
+				break;
+			}
+			case '3':
+				return 0;
+				break;
+		}
 	}
-
-	return OK;
+	return 0;
 }
 
 

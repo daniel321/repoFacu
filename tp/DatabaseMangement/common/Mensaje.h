@@ -9,6 +9,11 @@ typedef struct request{
 	bool leo;
 }request;
 
+typedef struct respInicial{
+	long mtype;
+	int matches;
+}respInicial;
+
 typedef struct response{
 	long mtype;
 	struct registro reg;

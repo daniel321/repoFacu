@@ -47,5 +47,6 @@ void BaseDeDatos::guardar(const Registro &reg)
 	char* buffer = reg.serializar();
 	arch.write(buffer, tamTotal);
 	delete[] buffer;
+	vectorRegistros.push_back(reg);
 }
 
