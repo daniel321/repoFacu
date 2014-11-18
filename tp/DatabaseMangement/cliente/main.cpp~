@@ -26,7 +26,7 @@ int main (int argc, char** argv)
 				std::getline(std::cin, dir);
 				std::cout << "Ingrese telefono (o *):" << std::endl;
 				std::getline(std::cin, tel);
-				std::cout << "ingreso:" << nombre << " - " << dir << " - " << tel << std::endl;
+				std::cout << "ingreso:" << nombre << " " << dir << " " << tel << std::endl;
 				if (opcion == '1')
 						cliente.escribirEnBaseDeDatos(nombre, dir, tel);
 				if (opcion == '2')
